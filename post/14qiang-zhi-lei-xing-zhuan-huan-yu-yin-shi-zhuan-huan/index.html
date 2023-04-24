@@ -1,0 +1,332 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>14.强制类型转换与隐式转换 | 笔记</title>
+<link rel="shortcut icon" href="https://xy-gif.github.io/favicon.ico?v=1682314727285">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://xy-gif.github.io/styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="14.强制类型转换与隐式转换 | 笔记 - Atom Feed" href="https://xy-gif.github.io/atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="14.强制类型转换与隐式转换
+强制类型转换
+static_cast
+用于基础数据类型的转换和上行转换
+基础数据类型转换
+unsigned a = 1;
+int b = static_cast&lt;int&gt;(a); // 转换正确
+
+..." />
+    <meta name="keywords" content="C++" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.5.1/build/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://xy-gif.github.io">
+  <img class="avatar" src="https://xy-gif.github.io/images/avatar.png?v=1682314727285" alt="">
+  </a>
+  <h1 class="site-title">
+    笔记
+  </h1>
+  <p class="site-description">
+    
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              14.强制类型转换与隐式转换
+            </h2>
+            <div class="post-info">
+              <span>
+                2023-04-17
+              </span>
+              <span>
+                7 min read
+              </span>
+              
+                <a href="https://xy-gif.github.io/tag/CYVB1qPMl/" class="post-tag">
+                  # C++
+                </a>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content" v-pre>
+                <h1 id="14强制类型转换与隐式转换">14.强制类型转换与隐式转换</h1>
+<h2 id="强制类型转换">强制类型转换</h2>
+<h3 id="static_cast">static_cast</h3>
+<p>用于基础数据类型的转换和上行转换</p>
+<h4 id="基础数据类型转换">基础数据类型转换</h4>
+<pre><code class="language-cpp">unsigned a = 1;
+int b = static_cast&lt;int&gt;(a); // 转换正确
+
+int c = 1;
+double d = static_cast&lt;double&gt;(c); // 转换正确
+</code></pre>
+<p>这和C语言的转换差不多，就是换了一种写法而已。</p>
+<h4 id="上行转换">上行转换</h4>
+<pre><code class="language-cpp">class Animal{};
+class Cat:public Animal{};
+
+Cat* c = new Cat();
+Aimal *a = static_cast&lt;Animal*&gt;(c);
+</code></pre>
+<p>这是一种上行转换，是安全的</p>
+<p>而static_cast进行下行转换是不安全的，除非自己知道后果，否者下行转换时一般用dynamic_cast。</p>
+<h3 id="dynamic_cast">dynamic_cast</h3>
+<p>前面的RTTI中已经说过<code>dynamic_cast</code>，用于安全的进行下行转化，此处略过。</p>
+<h3 id="const_cast">const_cast</h3>
+<p>参考：<a href="https://blog.csdn.net/weixin_44218779/article/details/125000750">C++ 中 const_cast 作用详解</a><br>
+const_cast是一种C++运算符，主要是用来去除复合类型中const和volatile属性(没有真正去除)。</p>
+<p>我们需要注意的是：变量本身的const属性是不能去除的，要想修改变量的值，一般是去除指针（或引用）的const属性，再进行间接修改。</p>
+<p>用法:const_cast<type>(expression)</p>
+<p>通过const_cast运算符，也只能将const type<em>转换为type</em>，将const type&amp;转换为type&amp;。</p>
+<p>也就是说源类型和目标类型除了const属性不同，其他地方完全相同。</p>
+<p>我们先来看这样一段代码：</p>
+<pre><code class="language-cpp">#include &lt;iostream&gt;
+using namespace std;
+ 
+int main () {
+	const int data = 100;
+    int *pp = (int *)&amp;data;
+    *pp = 300;
+    cout &lt;&lt; &quot;data = &quot; &lt;&lt; data &lt;&lt; &quot;\t地址 : &quot; &lt;&lt; &amp;data &lt;&lt; endl &lt;&lt; endl ;
+	cout &lt;&lt; &quot;  pp  = &quot; &lt;&lt; *pp &lt;&lt; &quot;\t地址 : &quot; &lt;&lt; pp &lt;&lt; endl &lt;&lt; endl ;
+	int *p = const_cast&lt;int*&gt;( &amp;data ) ;
+	cout &lt;&lt; &quot;data = &quot; &lt;&lt; data &lt;&lt; &quot;\t地址 : &quot; &lt;&lt; &amp;data &lt;&lt; endl &lt;&lt; endl ;
+	cout &lt;&lt; &quot;  p  = &quot; &lt;&lt; *p &lt;&lt; &quot;\t地址 : &quot; &lt;&lt; p &lt;&lt; endl &lt;&lt; endl ;
+	*p = 200 ;
+ 
+	cout &lt;&lt; &quot;data = &quot; &lt;&lt; data &lt;&lt; &quot;\t地址 : &quot; &lt;&lt; &amp;data &lt;&lt; endl &lt;&lt; endl ;
+	cout &lt;&lt; &quot;  p  = &quot; &lt;&lt; *p &lt;&lt; &quot;\t地址 : &quot; &lt;&lt; p &lt;&lt; endl &lt;&lt; endl ;
+ 
+	return 0 ;
+}
+</code></pre>
+<p>运行结果如下：</p>
+<pre><code>data = 100    地址：0x6ffdfc
+
+    pp = 300  地址：0x6ffdfc
+
+data = 100    地址：0x6ffdfc
+
+    p = 300   地址：0x6ffdfc
+    
+data = 100    地址：0x6ffdfc
+
+    p = 200   地址：0x6ffdfc
+</code></pre>
+<p>很奇怪？ data 的地址是 0x6ffdfc, p 指向的地址也是 0x6ffdfc, 但是修改 p 之后, 同一个地址上的内容却不相同。</p>
+<p>可能是 const 的问题？ const 的机制，就是在编译期间，用一个常量代替了 data。这种方式叫做常量折叠。</p>
+<p>常量折叠与编译器的工作原理有关，是编译器的一种编译优化。在编译器进行语法分析的时候，将常量表达式计算求值，并用求得的值来替换表达式，放入常量表。所以在上面的例子中，编译器在优化的过程中，会把碰到的data（为const常量）全部以内容100替换掉，跟宏的替换有点类似。</p>
+<p>常量折叠只对原生类型起作用，对我们自定义的类型，是不会起作用的。</p>
+<p>我们看下面的代码：</p>
+<pre><code class="language-cpp">#include &lt;iostream&gt;
+#include &lt;stdio.h&gt;
+ 
+using namespace std;
+ 
+typedef struct _Test 
+{
+    int a;
+    _Test() {
+        a = 10;
+    };
+    void func {}
+} Test;
+ 
+int main()
+{
+    const Test b;
+    Test *b1 = const_cast&lt;Test *&gt;(&amp;b);
+    cout &lt;&lt; &quot;b = &quot; &lt;&lt; b.a &lt;&lt; endl;
+    b1-&gt;a = 100;
+    cout &lt;&lt; &quot;b = &quot; &lt;&lt; b.a &lt;&lt; &quot;, *b1 = &quot; &lt;&lt; b1-&gt;a &lt;&lt; endl;
+ 
+    return 0;
+｝
+</code></pre>
+<p>const_cast去除函数返回值的const属性。</p>
+<p>函数的形参为非const，当我们传递一个const修饰的变量时可以通过const_cast去除该变量的const属性。</p>
+<pre><code class="language-cpp">#include &lt;iostream&gt;
+using namespace std;
+ 
+const int *f(int *t)
+{
+	int *p = new int;
+	*p = 100;
+	return p;
+}
+ 
+int main () {
+	int x = 1;
+	int *p1 = const_cast&lt;int *&gt;(f(&amp;x));
+	*p1 = 1000;
+	
+	const int *y = new int(10);
+	//int *p2 = const_cast&lt;int *&gt;(f(y));//[Note] in passing argument 1 of 'const int* f(int&amp;)'
+	int *p2 = const_cast&lt;int *&gt;(f(const_cast&lt;int *&gt;(y)));
+	cout &lt;&lt; *y &lt;&lt;endl;
+//	*y = 100; //[Error] assignment of read-only location '* y'
+}
+</code></pre>
+<h3 id="reinterpret_cast">reinterpret_cast</h3>
+<p>该运算符可以把一个指针转换成一个整数，也可以把一个整数转换成一个指针。<br>
+也可以进行指针和指针之间的转换。</p>
+<pre><code class="language-cpp">int main()
+{
+    int* p = new int(5);
+    unsigned long p_val = reinterpret_cast&lt;unsigned long&gt;(p);
+
+    cout &lt;&lt; &quot;p    :&quot; &lt;&lt; p &lt;&lt; endl;
+    cout &lt;&lt; &quot;p_val:&quot; &lt;&lt; hex &lt;&lt; p_val &lt;&lt; endl;
+    
+    void *p1 = reinterpret_cast&lt;void *&gt;(p_val);//把地址值转换为指针
+    void *p2 = reinterpret_cast&lt;void *&gt;(p);    //指针间转换
+    
+    return 0;
+}
+</code></pre>
+<h2 id="隐式类型转换">隐式类型转换</h2>
+<p>一般发生时机：</p>
+<ol>
+<li>赋值和初始化操作：当使用一种类型的值向另一种类型的变量赋值或初始化时，如果目标类型可以容纳源类型，则会发生隐式转换。</li>
+<li>表达式上下文：如果一个表达式包含了不同类型的操作数，那么编译器会自动将其中一些操作数转换为与其他操作数类型匹配的类型。例如，在一个算术表达式中，如果两个操作数的类型不同，编译器会自动将其中一个操作数转换为另一个操作数的类型。</li>
+<li>函数参数传递和返回值：如果调用一个函数时，传递的参数的类型与函数参数的类型不匹配，或函数的返回值类型与函数返回的实际值的类型不匹配，那么编译器会自动进行隐式转换。</li>
+</ol>
+<p>后面比较深入，我也不会，不敢写了，详细知识参考：<br>
+<a href="https://zh.cppreference.com/w/cpp/language/implicit_conversion">隐式转换</a><br>
+<a href="https://www.cnblogs.com/apocelipes/p/14415033.html">彻底理解c++的隐式类型转换</a></p>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li><a href="#14%E5%BC%BA%E5%88%B6%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2%E4%B8%8E%E9%9A%90%E5%BC%8F%E8%BD%AC%E6%8D%A2">14.强制类型转换与隐式转换</a>
+<ul>
+<li><a href="#%E5%BC%BA%E5%88%B6%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2">强制类型转换</a>
+<ul>
+<li><a href="#static_cast">static_cast</a>
+<ul>
+<li><a href="#%E5%9F%BA%E7%A1%80%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2">基础数据类型转换</a></li>
+<li><a href="#%E4%B8%8A%E8%A1%8C%E8%BD%AC%E6%8D%A2">上行转换</a></li>
+</ul>
+</li>
+<li><a href="#dynamic_cast">dynamic_cast</a></li>
+<li><a href="#const_cast">const_cast</a></li>
+<li><a href="#reinterpret_cast">reinterpret_cast</a></li>
+</ul>
+</li>
+<li><a href="#%E9%9A%90%E5%BC%8F%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2">隐式类型转换</a></li>
+</ul>
+</li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+
+        
+
+        <div class="site-footer">
+  
+  <a class="rss" href="https://xy-gif.github.io/atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

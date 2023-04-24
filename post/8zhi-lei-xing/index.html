@@ -1,0 +1,468 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>8.值类型 | 笔记</title>
+<link rel="shortcut icon" href="https://xy-gif.github.io/favicon.ico?v=1682314727285">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://xy-gif.github.io/styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="8.值类型 | 笔记 - Atom Feed" href="https://xy-gif.github.io/atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="8.值类型
+lvalue(左值)，prvalue(纯右值) 和 xvalue(将亡值)三种。加上两种混合类别：glvalue(泛左值)和rvalue(右值)，一共有五种。
+分类标准：
+
+
+是否拥有身份（identity）：可以确定表达式是否..." />
+    <meta name="keywords" content="C++" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.5.1/build/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://xy-gif.github.io">
+  <img class="avatar" src="https://xy-gif.github.io/images/avatar.png?v=1682314727285" alt="">
+  </a>
+  <h1 class="site-title">
+    笔记
+  </h1>
+  <p class="site-description">
+    
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              8.值类型
+            </h2>
+            <div class="post-info">
+              <span>
+                2023-04-18
+              </span>
+              <span>
+                10 min read
+              </span>
+              
+                <a href="https://xy-gif.github.io/tag/CYVB1qPMl/" class="post-tag">
+                  # C++
+                </a>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content" v-pre>
+                <h1 id="8值类型">8.值类型</h1>
+<p>lvalue(左值)，prvalue(纯右值) 和 xvalue(将亡值)三种。加上两种混合类别：glvalue(泛左值)和rvalue(右值)，一共有五种。</p>
+<h2 id="分类标准">分类标准：</h2>
+<ul>
+<li>
+<p><strong>是否拥有身份（identity）：可以确定表达式是否与另一表达式指代同一实体，例如比较它们所标识的对象或函数的（直接或间接获得的）地址；</strong> 也就是说能否通过&amp;获取其地址，例如，int a可以&amp;a获取地址，则a就是有身份的，而常量1无法通过&amp;获取地址，所以1是没有身份的。</p>
+</li>
+<li>
+<p><strong>是否可被移动（moveable）：移动构造函数、移动赋值运算符或实现了移动语义的其他函数重载能够绑定到这个表达式。</strong></p>
+</li>
+</ul>
+<p>移动例子：</p>
+<pre><code class="language-cpp">#include &lt;iostream&gt;
+#include &lt;vector&gt;
+
+int main()
+{
+    std::cout &lt;&lt; &quot;Create and fill v1:\n&quot;;
+    std::vector&lt;int&gt; v1 = {1, 2, 3};
+    for (auto i : v1) {
+        std::cout &lt;&lt; i &lt;&lt; &quot; &quot;;
+    }
+    std::cout &lt;&lt; &quot;\n&quot;;
+
+    // Move v1 to v2
+    std::cout &lt;&lt; &quot;Move v1 to v2:\n&quot;;
+    std::vector&lt;int&gt; v2 = std::move(v1);//v1原本是不可移动的，但是通过std::move函数，转为可以动的右值引用。
+    for (auto i : v2) {
+        std::cout &lt;&lt; i &lt;&lt; &quot; &quot;;
+    }
+    std::cout &lt;&lt; &quot;\n&quot;;
+
+    // Access v1 after move
+    std::cout &lt;&lt; &quot;Access v1 after move:\n&quot;;
+    for (auto i : v1) {
+        std::cout &lt;&lt; i &lt;&lt; &quot; &quot;;
+    }
+    std::cout &lt;&lt; &quot;\n&quot;;
+
+    return 0;
+}
+</code></pre>
+<p>语句<code>std::vector&lt;int&gt; v2 = std::move(v1);</code>作用是把v1中的资源等内容移动到v2中，这句话的执行具体方法如下：</p>
+<pre><code>1. std::move(v1)将v1转化为一个将亡值，也就是一个右值引用
+2. 在“=”号时会调用移动移动构造函数构造v2（若v2之前就定义过了则会调用移动赋值函数），将v1中的资源移入v2
+3. v1中的资源被清空
+</code></pre>
+<p>可以理解为可移动就是能将资源移动到其它的变量中,移动完成后自身就会销毁</p>
+<h2 id="c11中对于这五种类别定义">C++11中对于这五种类别定义</h2>
+<ul>
+<li>lvalue是指：拥有身份且不可被移动的表达式。</li>
+<li>xvalue是指：拥有身份且可被移动的表达式。</li>
+<li>prvalue是指：不拥有身份且可被移动的表达式。</li>
+<li>glvalue是指：拥有身份的表达式，lvalue和xvalue都是glvalue。</li>
+<li>rvalue是指：可被移动的表达式。prvalue和xvalue都是rvalue。</li>
+</ul>
+<p>如下表：</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>拥有身份(glvalue)</th>
+<th>不拥有身份</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>可移动(rvalue)</td>
+<td>xvalue</td>
+<td>prvalue</td>
+</tr>
+<tr>
+<td>不可移动</td>
+<td>lvalue</td>
+<td>不存在</td>
+</tr>
+</tbody>
+</table>
+<h3 id="常见lvalue">常见lvalue</h3>
+<pre><code class="language-cpp">&quot;hello world&quot; // lvalue
+int a{}; // lvalue
+++a; // lvalue
+ 
+int&amp; get() {static int a;return a;}//返回的值是lvalue
+get(); // lvalue，函数名
+ 
+int b[4]{}; // lvalue
+b[2]; // lvalue
+ 
+int foo();
+int &amp;&amp;a { foo() }; // lvalue
+ 
+struct foo {int a;};
+foo f; // lvalue
+f.a; // lvalue
+ 
+int &amp;&amp;c{ 55 }; // lvalue，这是个右值引用
+int &amp;d{ a }; // lvalue
+</code></pre>
+<h3 id="常见prvalue">常见prvalue</h3>
+<pre><code class="language-cpp">42 // prvalue
+true // prvalue
+ 
+foo();// prvalue,函数返回值
+ 
+int a{}, b{}; // both lvalues
+a + b; // prvalue
+&amp;a; // prvalue
+ 
+a++ // prvalue
+b-- // prvalue
+a &amp;&amp; b  // prvalue
+a &lt; b // prvalue
+ 
+double {}; // prvalue
+std::vector&lt;X&gt; {}; // prvalue
+</code></pre>
+<p><strong>++i和i++：++i是左值，因为++i执行的过程是先把i加一，然后返回i变量本身。而i++是右值，因为i++先把i复制到一个临时变量中，然后把i加一，最后返回这个临时变量，因为变量是临时的所以是右值。所以++i可以赋值、取地址，但i++不行。</strong></p>
+<h3 id="常见xvalue">常见xvalue</h3>
+<p>1）返回右值引用的函数的调用表达式<br>
+2）转换为右值引用的转换函数的调用表达式</p>
+<p><em>也可以说：<br>
+表达式的类型是右值引用类型。例如，int&amp;&amp; 类型的变量或函数参数。<br>
+表达式需要进行对象的移动或转移所有权。例如，调用一个移动构造函数或移动赋值运算符的操作，或使用 std::move 转换之后的表达式。</em></p>
+<pre><code class="language-cpp">bool b {true}; // lvalue
+std::move(b); // xvalue
+static_cast&lt;bool&amp;&amp;&gt;(b); // xvalue
+ 
+int&amp;&amp; foo();
+foo(); // xvalue
+ 
+struct foo {int a;};
+std::move(f).a; // xvalue
+foo{}.a; // xvalue
+ 
+int a[4]{};
+std::move(a); // xvalue
+std::move(a)[2]; // xvalue
+ 
+using arr = int[2];
+arr{}[0]; // xvalue
+</code></pre>
+<h2 id="引用与移动语义">引用与移动语义</h2>
+<h3 id="左值引用">左值引用</h3>
+<p>就是指向左值的引用<br>
+例如：</p>
+<pre><code class="language-cpp">int a = 10;
+int &amp;b = a;
+</code></pre>
+<p>b是a的一个左值引用，a是一个左值，所以b绑定的是左值所以叫左值引用。<br>
+左值引用经常在传参的时候使用，尤其是当对象成员多时，这样可以减少对象成员压栈的次数，提高速度。</p>
+<h3 id="常左值引用">常左值引用</h3>
+<p>C++中，如下代码是错误的</p>
+<pre><code class="language-cpp">int &amp;a = 10;
+</code></pre>
+<p>很明显10是一个右值，而右值是没有地址的，所以a就不知道绑定到哪个地址上，所以左值引用无法直接与右值绑定<br>
+但是可以通过const关键字绑定右值，即</p>
+<pre><code class="language-cpp">const int &amp;a = 10;
+</code></pre>
+<p>这样就是正确的，实际上，对于 const int &amp;a = 10 这个语句而言，编译器会将 10 转换成一个临时变量，然后将 a 绑定到这个临时变量上。所以当用作参数时const int &amp;a既可以接收左值，也可以接收右值</p>
+<h3 id="右值引用">右值引用</h3>
+<p>就是对右值进行引用，右值引用可用于为临时对象延长生存期（注意，常左值引用亦能延长临时对象生存期，但不能通过常左值引用修改他们）</p>
+<pre><code class="language-cpp">#include &lt;iostream&gt;
+#include &lt;string&gt;
+ 
+int main()
+{
+    std::string s1 = &quot;Test&quot;;
+//  std::string&amp;&amp; r1 = s1;           // 错误：不能绑定到左值
+ 
+    const std::string&amp; r2 = s1 + s1; // okay ：到 const 的左值引用延长生存期
+//  r2 += &quot;Test&quot;;                    // 错误：不能通过到 const 的引用修改
+ 
+    std::string&amp;&amp; r3 = s1 + s1;      // okay ：右值引用延长生存期
+    r3 += &quot;Test&quot;;                    // okay ：能通过到非 const 的引用修改
+    std::cout &lt;&lt; r3 &lt;&lt; '\n';
+}
+</code></pre>
+<p>使用函数<code>std::move</code>可以把<code>lvalue</code>转化为<code>右值引用</code></p>
+<pre><code class="language-cpp">#include &lt;iostream&gt;
+#include &lt;utility&gt;
+ 
+void f(int&amp; x)
+{
+    std::cout &lt;&lt; &quot;lvalue reference overload f(&quot; &lt;&lt; x &lt;&lt; &quot;)\n&quot;;
+}
+ 
+void f(const int&amp; x)
+{
+    std::cout &lt;&lt; &quot;lvalue reference to const overload f(&quot; &lt;&lt; x &lt;&lt; &quot;)\n&quot;;
+}
+ 
+void f(int&amp;&amp; x)
+{
+    std::cout &lt;&lt; &quot;rvalue reference overload f(&quot; &lt;&lt; x &lt;&lt; &quot;)\n&quot;;
+}
+ 
+int main()
+{
+    int i = 1;
+    const int ci = 2;
+    f(i);  // 调用 f(int&amp;)
+    f(ci); // 调用 f(const int&amp;)
+    f(3);  // 调用 f(int&amp;&amp;)
+           // 若不提供 f(int&amp;&amp;) 重载则会调用 f(const int&amp;)
+    f(std::move(i)); // 调用 f(int&amp;&amp;)
+ 
+    // 右值引用变量在用于表达式时是左值
+    int&amp;&amp; x = 1;
+    f(x);            // calls f(int&amp; x)
+    f(std::move(x)); // calls f(int&amp;&amp; x)
+}
+</code></pre>
+<p>右值引用既可以绑定在<code>xvalue</code>上也可以绑定在另一个<code>右值引用</code>上</p>
+<h3 id="移动语义">移动语义</h3>
+<p>通过右值引用我们可以实现移动构造函数<br>
+例如下面的例子：</p>
+<pre><code class="language-cpp">#include &lt;iostream&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;string.h&gt;
+
+using namespace std;
+
+class Test {
+private:
+    int* ptr;
+    int size;
+public:
+    Test(int n=0) {
+        size = n;
+        ptr = new int[n];
+        cout &lt;&lt; &quot;调用了普通构造函数&quot; &lt;&lt; endl;
+    }
+    
+    Test(const Test&amp; other) {
+        size = other.size;
+        ptr = new int[size];
+        memcpy(ptr,other.ptr,other.size);
+        cout &lt;&lt; &quot;调用了复制构造函数&quot; &lt;&lt; endl;
+    }
+
+    Test(Test&amp;&amp; other) noexcept {
+        ptr = other.ptr;
+        size = other.size;
+        other.ptr = nullptr;
+        other.size = 0;
+        cout &lt;&lt; &quot;调用了移动构造函数&quot; &lt;&lt; endl;
+    }
+
+    ~Test() {
+        delete[] ptr;
+    }
+};
+
+int main() {
+    Test t1(10);  // 调用普通构造函数
+    Test t2(t1);  // 调用复制构造函数
+    Test t3(move(t1));  // 调用移动构造函数
+
+    return 0;
+}
+</code></pre>
+<p>上例中，可以对比拷贝构造函数和移动构造函数<br>
+拷贝构造函数进行深拷贝，重新向内存申请啦空间，<br>
+而移动构造函数只是让对象指向右值对象，并释放了右值对象。<br>
+明显移动构造函数开销更小，这种操作在对象是返回值也就是xvalue时十分有用<br>
+可以避免大量内存申请的开销，防止内存碎片过多。</p>
+<p><em>注：当返回值返回一个对象时，一般会调用拷贝函数或者拷贝构造函数，但有时编译器会进行返回值优化RVO(Return Value Optimization)，这样实验是就观察不到是否调用这个函数了，在g++中可以通过<code>-fno-elide-constructors</code>选项进制返回值优化</em></p>
+<h2 id="本文参考文章">本文参考文章</h2>
+<ul>
+<li><a href="https://mp.weixin.qq.com/s/XghlSYn9aUgYN6oiBAO2jw">《C++ 中的值类别》-微信-CPP开发者</a></li>
+</ul>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li><a href="#8%E5%80%BC%E7%B1%BB%E5%9E%8B">8.值类型</a>
+<ul>
+<li><a href="#%E5%88%86%E7%B1%BB%E6%A0%87%E5%87%86">分类标准：</a></li>
+<li><a href="#c11%E4%B8%AD%E5%AF%B9%E4%BA%8E%E8%BF%99%E4%BA%94%E7%A7%8D%E7%B1%BB%E5%88%AB%E5%AE%9A%E4%B9%89">C++11中对于这五种类别定义</a>
+<ul>
+<li><a href="#%E5%B8%B8%E8%A7%81lvalue">常见lvalue</a></li>
+<li><a href="#%E5%B8%B8%E8%A7%81prvalue">常见prvalue</a></li>
+<li><a href="#%E5%B8%B8%E8%A7%81xvalue">常见xvalue</a></li>
+</ul>
+</li>
+<li><a href="#%E5%BC%95%E7%94%A8%E4%B8%8E%E7%A7%BB%E5%8A%A8%E8%AF%AD%E4%B9%89">引用与移动语义</a>
+<ul>
+<li><a href="#%E5%B7%A6%E5%80%BC%E5%BC%95%E7%94%A8">左值引用</a></li>
+<li><a href="#%E5%B8%B8%E5%B7%A6%E5%80%BC%E5%BC%95%E7%94%A8">常左值引用</a></li>
+<li><a href="#%E5%8F%B3%E5%80%BC%E5%BC%95%E7%94%A8">右值引用</a></li>
+<li><a href="#%E7%A7%BB%E5%8A%A8%E8%AF%AD%E4%B9%89">移动语义</a></li>
+</ul>
+</li>
+<li><a href="#%E6%9C%AC%E6%96%87%E5%8F%82%E8%80%83%E6%96%87%E7%AB%A0">本文参考文章</a></li>
+</ul>
+</li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://xy-gif.github.io/post/9yun-suan-fu-chong-zai-yu-you-yuan/">
+              <h3 class="post-title">
+                9.运算符重载与友元
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  
+  <a class="rss" href="https://xy-gif.github.io/atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

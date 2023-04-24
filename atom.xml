@@ -1,0 +1,2836 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+    <id>https://xy-gif.github.io</id>
+    <title>笔记</title>
+    <updated>2023-04-24T05:40:44.077Z</updated>
+    <generator>https://github.com/jpmonette/feed</generator>
+    <link rel="alternate" href="https://xy-gif.github.io"/>
+    <link rel="self" href="https://xy-gif.github.io/atom.xml"/>
+    <logo>https://xy-gif.github.io/images/avatar.png</logo>
+    <icon>https://xy-gif.github.io/favicon.ico</icon>
+    <rights>All rights reserved 2023, 笔记</rights>
+    <entry>
+        <title type="html"><![CDATA[1.string]]></title>
+        <id>https://xy-gif.github.io/post/1string/</id>
+        <link href="https://xy-gif.github.io/post/1string/">
+        </link>
+        <updated>2023-04-22T10:58:11.000Z</updated>
+        <content type="html"><![CDATA[<h1 id="1string">1.string</h1>
+<p><em>注：此处的string指的是std::string</em></p>
+<h2 id="一构造函数以及一些常用重载">（一）构造函数以及一些常用重载</h2>
+<table>
+<thead>
+<tr>
+<th>类成员函数名接口</th>
+<th>函数作用</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>string(const char* str)</code></td>
+<td>根据字符串常量地址创造字符串</td>
+</tr>
+<tr>
+<td><code>string(int num,char c)</code></td>
+<td>创造一个字符‘c’重复了num遍的字符串</td>
+</tr>
+<tr>
+<td><code>string(string str)</code></td>
+<td>根据另一个string拷贝</td>
+</tr>
+<tr>
+<td><code>string(const char* str,int length)</code></td>
+<td>截取字符串前length个字符作为新字符串</td>
+</tr>
+<tr>
+<td><code>string(const char* bengin,const char* end)</code></td>
+<td>截取字符串从begin开始到end不包括end，即[begin,end)</td>
+</tr>
+<tr>
+<td><code>string(const string &amp;str,int begin,int size)</code></td>
+<td>从begin处截取size个字符作为字符串</td>
+</tr>
+<tr>
+<td><code>string operator+(string &amp;str1,string &amp;str2)</code></td>
+<td>对运算符+进行重载，可以连接两个字符串</td>
+</tr>
+<tr>
+<td><code>string &amp;operator+=(const char *s)</code></td>
+<td>在原本字符串后面添加新的字符串</td>
+</tr>
+<tr>
+<td><code>string &amp;operator+=(const char c)</code></td>
+<td>与上类似</td>
+</tr>
+<tr>
+<td><code>string &amp;operator+=(const string &amp;s)</code></td>
+<td>与上类似</td>
+</tr>
+</tbody>
+</table>
+<h2 id="g的stdstringconst-char-str内容存放">g++的std::string(const char *str)内容存放</h2>
+<p>1.进入构造函数先测出str长度，<br>
+2.之后将长度等参数全部传入另一个函数，此处我们称为f1()<br>
+3.进入f1先检测一下str是否为空，为空报错。不为空就会在进入一个函数f2()，在f2()中会给str分配空间分配的空间在堆上。<br>
+5.之后把str内容复制到堆上。<br>
+<em>以上是根据g++反汇编的出的大致结论，不同编译器分配策略不同，例如有的编译器可能会当字符串短时在栈上分配，字符串长时在堆上分配。</em></p>
+<h2 id="getline函数">getline函数</h2>
+<table>
+<thead>
+<tr>
+<th>getline函数重载</th>
+<th>函数作用</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>istream&amp; getline (istream&amp; is, string&amp; str)</code></td>
+<td>这个重载形式从输入流中读取字符，直到遇到 EOF 或 '\n' 字符为止，并把读取到的字符存储到 str 中。</td>
+</tr>
+<tr>
+<td><code>istream&amp; getline (istream&amp; is, string&amp; str, char delim)</code></td>
+<td>这个重载形式在 istream 中查找 delim 字符，然后从字符位置开始从输入流中读取字符，直到EOF或者 delim 字符出现时停止。读取到的字符保存到字符串参数 str 中。</td>
+</tr>
+<tr>
+<td><em>注意此处的getline不是类成员函数，就是一般函数，当然在cin等中也存在同名方法</em></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h2 id="字符串搜索">字符串搜索</h2>
+<h3 id="子串搜索">子串搜索</h3>
+<table>
+<thead>
+<tr>
+<th>类成员函数接口</th>
+<th>函数作用</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>size_type find(const string &amp;str,size_type pos=0)const</code></td>
+<td>从字符串pos位置向后开始查找子串str，若找到返回子串首字符在本串中出现的位置，若没找到，返回string::npos</td>
+</tr>
+<tr>
+<td><code>size_type find(const char *str,size_type pos=0)const</code></td>
+<td>与上类似</td>
+</tr>
+<tr>
+<td><code>size_type find(const char *str,size_type pos=0,int n)const</code></td>
+<td>与上类似但只在前n个字符中查找</td>
+</tr>
+<tr>
+<td><code>size_type find(const char c,size_type pos=0)const</code></td>
+<td>与第一个类似，但只查找字符</td>
+</tr>
+<tr>
+<td><em>size_type 实际上就是unsigned int类型</em></td>
+<td></td>
+</tr>
+<tr>
+<td><em>string::npos大多数编译器将其定义为-1或者0xfffffffffffffffff，且其为公有成员变量可以直接访问</em></td>
+<td></td>
+</tr>
+<tr>
+<td><em>类成员函数声明末尾添加const，表示这个类成员函数不可以对类成员变量进行修改</em></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h3 id="其它搜索">其它搜索</h3>
+<table>
+<thead>
+<tr>
+<th>类成员函数接口</th>
+<th>函数作用</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>size_type rfind(str,size_type pos=npos)</code></td>
+<td>字符串从pos位置向前搜索，若找到返回子串首字符在本串中出现的位置，若没找到，返回string::npos</td>
+</tr>
+<tr>
+<td><code>size_type find_first_of(str,size_type pos=0)</code></td>
+<td>根据str这个字符串集合中的元素，找出第一个元素出现在本字符串中的位置，若没有返回npos</td>
+</tr>
+<tr>
+<td><code>size_type find_last_of(str,size_type pos=npos)</code></td>
+<td>根据str这个字符串集合中的元素，找出最后一个元素出现在本字符串中的位置，若没有返回npos</td>
+</tr>
+<tr>
+<td><code>size_type find_first_not_of(str,size_type pos=0)</code></td>
+<td>根据str这个字符串集合中的元素，找出第一个不是str元素出现在本字符串中的位置，若没有返回npos</td>
+</tr>
+<tr>
+<td><code>size_type find_last_not_of(str,size_type pos=npos)</code></td>
+<td>根据str这个字符串集合中的元素，找出最后一个不是str元素出现在本字符串中的位置，若没有返回npos</td>
+</tr>
+</tbody>
+</table>
+<p><em>注意：pos是size_type类型也就是说npos是最大值0xfffffffffffffffff，也就是说默认从最后开始搜索</em></p>
+<h2 id="字符串大小和内存大小">字符串大小和内存大小</h2>
+<table>
+<thead>
+<tr>
+<th>类成员接口</th>
+<th>函数作用</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>size_t size()</code></td>
+<td>求字符串长度，也就是字符个数</td>
+</tr>
+<tr>
+<td><code>size_t length()</code></td>
+<td>同size()</td>
+</tr>
+<tr>
+<td><code>size_t capacity()</code></td>
+<td>返回对象中分配给字符串的内存大小</td>
+</tr>
+<tr>
+<td><code>void resize(size_t n)</code></td>
+<td>修改字符串长度，若n比原来的字符串长度大则原字符串后面增加'\0'，若n比原字符串长度小则截断原字符串</td>
+</tr>
+<tr>
+<td><code>void reserve(size_t n)</code></td>
+<td>修改给字符串分配的内存大小，若比原内存小则不操作，若比原内存大一般分配16*n-1的字节大小</td>
+</tr>
+<tr>
+<td><em>reserve 也不一定分配16*n-1的大小，例如在（编译器：g++ (tdm64-1) 4.9.2，环境win11）实验时发现reserve分配的内存正好是n，这可能和编译器行为有关</em></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h2 id="字符串种类">字符串种类</h2>
+<p>string是模板类basic_string模板参数实例化的类<br>
+basic_string类定义大致如下：</p>
+<pre><code class="language-cpp">template&lt;class charT,class char_traits&lt;charT&gt;,class Allocator = allocator&lt;charT&gt;&gt;
+basic_string{...};
+</code></pre>
+<p>由basic_string参数实例化后产生如下的string类型</p>
+<pre><code class="language-cpp">typedef basic_string&lt;char&gt; string;
+typedef basic_string&lt;wchar_t&gt; wstring;
+typedef basic_string&lt;char16_t&gt; u16string;    //C++11
+typedef basic_string&lt;char32_t&gt; u32string;    //C++11
+</code></pre>
+<h2 id="线程安全性">线程安全性</h2>
+<p><strong>std::string不是线程安全的</strong>，一般情况下STL的容器都不安全，这里提一嘴，之后再对线程安全性做详细学习。</p>
+<h1 id="函数接口总结">函数接口总结</h1>
+<table>
+<thead>
+<tr>
+<th>string类成员函数</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>string(const char* str)</code></td>
+</tr>
+<tr>
+<td><code>string(int num,char c)</code></td>
+</tr>
+<tr>
+<td><code>string(string str)</code></td>
+</tr>
+<tr>
+<td><code>string(const char* str,int length)</code></td>
+</tr>
+<tr>
+<td><code>string(const char* bengin,const char* end)</code></td>
+</tr>
+<tr>
+<td><code>string(const string &amp;str,int begin,int end)</code></td>
+</tr>
+<tr>
+<td><code>string operator+(string &amp;str1,string &amp;str2)</code></td>
+</tr>
+<tr>
+<td><code>string &amp;operator+=(const char *s)</code></td>
+</tr>
+<tr>
+<td><code>string &amp;operator+=(const char c)</code></td>
+</tr>
+<tr>
+<td><code>string &amp;operator+=(const string &amp;s)</code></td>
+</tr>
+<tr>
+<td><code>size_type find(const string &amp;str,size_type pos=0)const</code></td>
+</tr>
+<tr>
+<td><code>size_type find(const char *str,size_type pos=0)const</code></td>
+</tr>
+<tr>
+<td><code>size_type find(const char *str,size_type pos=0,int n)const</code></td>
+</tr>
+<tr>
+<td><code>size_type find(const char c,size_type pos=0)const</code></td>
+</tr>
+<tr>
+<td><code>size_type rfind(str,size_type pos=npos)</code></td>
+</tr>
+<tr>
+<td><code>size_type find_first_of(str,size_type pos=0)</code></td>
+</tr>
+<tr>
+<td><code>size_type find_last_of(str,size_type pos=npos)</code></td>
+</tr>
+<tr>
+<td><code>size_type find_first_not_of(str,size_type pos=0)</code></td>
+</tr>
+<tr>
+<td><code>size_type find_last_not_of(str,size_type pos=npos)</code></td>
+</tr>
+<tr>
+<td><code>size_t size()</code></td>
+</tr>
+<tr>
+<td><code>size_t length()</code></td>
+</tr>
+<tr>
+<td><code>size_t capacity()</code></td>
+</tr>
+<tr>
+<td><code>void resize(size_t n)</code></td>
+</tr>
+<tr>
+<td><code>void reserve(size_t n)</code></td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th>getline函数</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>istream&amp; getline (istream&amp; is, string&amp; str)</code></td>
+</tr>
+<tr>
+<td><code>istream&amp; getline (istream&amp; is, string&amp; str, char delim)</code></td>
+</tr>
+</tbody>
+</table>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[2.array与vector]]></title>
+        <id>https://xy-gif.github.io/post/2array-yu-vector/</id>
+        <link href="https://xy-gif.github.io/post/2array-yu-vector/">
+        </link>
+        <updated>2023-04-21T04:42:58.000Z</updated>
+        <content type="html"><![CDATA[<h1 id="2array与vector">2.array与vector</h1>
+<h2 id="前置知识">前置知识</h2>
+<p>数值型模板参数，即模板参数中是具体数值，例如下</p>
+<pre><code class="language-cpp">template&lt;typename T, int N&gt;
+T fun(T)
+{
+    char str[N];
+    ...    
+}
+</code></pre>
+<p>这个功能就像宏定义定义最大长度一样<br>
+当N定义为4就相当于#define N 4</p>
+<h2 id="array">array</h2>
+<h3 id="定义array">定义array</h3>
+<p>array在C++定义如下</p>
+<pre><code class="language-cpp">namespace std
+{
+    template &lt;typename Tp, size_t N&gt;
+    class array{...};
+}
+//Tp – Type of element. Required to be a complete type.
+//N – Number of elements.
+</code></pre>
+<p>声明一个array</p>
+<pre><code>std::array&lt;double, 10&gt; values;          //声明一个长度为10的array
+std::array&lt;double, 10&gt; values{};        //声明一个长度为10的array，并初始化所有元素为0
+std::array&lt;double, 10&gt; values {0.5,1.0,1.5,2.0};//声明一个长度为10的array初始化前4个元素，剩余为0
+</code></pre>
+<h3 id="array操作">array操作</h3>
+<p><em>以下Tp为模板参数</em></p>
+<table>
+<thead>
+<tr>
+<th>类成员接口</th>
+<th>函数作用</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>size_t size()</code></td>
+<td>返回array内当前元素个数</td>
+</tr>
+<tr>
+<td><code>size_t max_size()</code></td>
+<td>返回array最大能存多少个元素</td>
+</tr>
+<tr>
+<td><code>Tp* data()</code></td>
+<td>返回数组所在首地址</td>
+</tr>
+<tr>
+<td><code>bool empty()</code></td>
+<td>判断array是否为空</td>
+</tr>
+<tr>
+<td><code>void fill(const int &amp;__u)</code></td>
+<td>用__u填充array</td>
+</tr>
+</tbody>
+</table>
+<h2 id="vector">vector</h2>
+<h3 id="定义vector">定义vector</h3>
+<table>
+<thead>
+<tr>
+<th>定义方式</th>
+<th>解释</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>vector&lt;T&gt; v1</code></td>
+<td>定义一个空的向量v1</td>
+</tr>
+<tr>
+<td><code>vector&lt;T&gt; v2(vector&lt;T&gt; v1)</code></td>
+<td>定义一个和v1相同的向量v2</td>
+</tr>
+<tr>
+<td><code>vector&lt;T&gt; v2=v1</code></td>
+<td>定义一个和v1相同的向量v2</td>
+</tr>
+<tr>
+<td><code>vector&lt;T&gt; v3(size_t n,T val)</code></td>
+<td>定义一个长度为n所有值都为val的向量</td>
+</tr>
+<tr>
+<td><code>vector&lt;T&gt; v4(size_t n)</code></td>
+<td>定义一个长度为n的空向量</td>
+</tr>
+<tr>
+<td><code>vector&lt;T&gt; v5{a,b,c...}</code></td>
+<td>定义一个{a,b,c...}的向量</td>
+</tr>
+<tr>
+<td><code>vector&lt;T&gt; v6={a,b,c...}</code></td>
+<td>定义一个{a,b,c...}的向量</td>
+</tr>
+</tbody>
+</table>
+<h3 id="vector方法">vector方法</h3>
+<table>
+<thead>
+<tr>
+<th>类成员函数</th>
+<th>函数作用</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>size_t size()</code></td>
+<td>与之前string的类似</td>
+</tr>
+<tr>
+<td><code>size_t capacity()</code></td>
+<td>与之前string的类似</td>
+</tr>
+<tr>
+<td><code>void reserve(size_t __n)</code></td>
+<td>与之前string的类似</td>
+</tr>
+<tr>
+<td><code>void resize(size_t __n)</code></td>
+<td>与之前string的类似</td>
+</tr>
+<tr>
+<td><code>void push_back(int __x)</code></td>
+<td>在向量末尾添加元素__x，这会导致向量空间增长</td>
+</tr>
+<tr>
+<td><code>void pop_back()</code></td>
+<td>将向量末尾元素移除，向量空间不变size会减小</td>
+</tr>
+<tr>
+<td><code>void clear()</code></td>
+<td>清空所有元素，size变为0，但容量不变</td>
+</tr>
+</tbody>
+</table>
+<h2 id="array与vector区别">array与vector区别</h2>
+<h3 id="不同">不同</h3>
+<ul>
+<li>
+<p>构造方式不同</p>
+<ul>
+<li>vector无需指定大小，只需指定类型，例如：vector<int> a。</li>
+<li>array需要同时指定类型和大小，例如：array&lt;int, 3&gt; a。</li>
+</ul>
+</li>
+<li>
+<p>内存使用上不同</p>
+<ul>
+<li>vector需要占据比array更多的内存，因为其内存空间大小是动态可变的。</li>
+<li>内存高效的，用多少就申请多少。</li>
+</ul>
+</li>
+<li>
+<p>效率上不同</p>
+<ul>
+<li>vector效率偏低，因为当向vector中添加新元素的时候，内存空间不够，需要重新申请更大的空间，由于vector是连续内存空间的，因此其申请更多空间的时候，可能整个位置发生改变，需要将原来空间里的数据拷贝过去。</li>
+</ul>
+</li>
+<li>
+<p>下标类型不同</p>
+<ul>
+<li>在用下标访问元素时，vector 使用 vector::size_type 作为下标的类型，而数组下标的正确类型则是 size_t；</li>
+</ul>
+</li>
+<li>
+<p>swap操作不同</p>
+<ul>
+<li>vector是将引用进行交换，效率高，其迭代器指向原来的容器（原来的容器中的元素指向的却是另一个容器的值），但是end的引用并没有发生交换，因此在输出的时候注意别用end作为迭代终止条件。</li>
+<li>array是进行值的交换，效率低，且迭代器仍指向原来的容器</li>
+</ul>
+</li>
+</ul>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[3.函数指针]]></title>
+        <id>https://xy-gif.github.io/post/3han-shu-zhi-zhen/</id>
+        <link href="https://xy-gif.github.io/post/3han-shu-zhi-zhen/">
+        </link>
+        <updated>2023-04-20T05:01:52.000Z</updated>
+        <content type="html"><![CDATA[<h1 id="3函数指针">3.函数指针</h1>
+<h2 id="指针简介">指针简介</h2>
+<p>没有指针基础的话先去补习一下，可参见下文中 指针补充 中的文章<br>
+指针的内容就是地址，访问这个指针的内容就是访问指针所指的变量。<br>
+指针在计算机组成中属于间接寻址的一种，与lea，mov等指令有关<br>
+例如：</p>
+<pre><code class="language-cpp">int *p=x;
+    lea reg,[x_addr]  //就是把x的地址放到寄存器中
+    mov [p_addr],reg  //再把寄存器中变量放到p的地址上
+                      //可知此时变量p中存放的x的地址
+</code></pre>
+<h2 id="函数指针">函数指针</h2>
+<h3 id="汇编符号标记">汇编符号标记</h3>
+<p>关于函数观察如下代码，add被编译成汇编代码，可以看到汇编中add的符号</p>
+<pre><code class="language-cpp">int add(int a,int b)
+{
+    return a+b;
+}
+
+add:
+        push    rbp
+        mov     rbp, rsp
+        mov     DWORD PTR [rbp-4], edi
+        mov     DWORD PTR [rbp-8], esi
+        mov     edx, DWORD PTR [rbp-4]
+        mov     eax, DWORD PTR [rbp-8]
+        add     eax, edx
+        pop     rbp
+        ret
+</code></pre>
+<p>在汇编语言中符号标记表示标记下方第一个指令的地址，此处add表示的地址也是<br>
+就是push rbp的地址。同理在C/C++中函数的函数名也同样是add表示函数的起<br>
+始地址</p>
+<p><strong>由地址和指针等同可知，函数指针就是函数名，函数地址也是函数名。</strong></p>
+<h3 id="cc中使用函数指针">C/C++中使用函数指针</h3>
+<h4 id="定义函数指针">定义函数指针</h4>
+<p>例如：</p>
+<pre><code class="language-cpp">#include &lt;iostream&gt;
+
+using namespace std;
+void print(const char *s)
+{
+    cout &lt;&lt; s&lt;&lt;endl;
+}
+
+int main()
+{
+    void (*fun)(const char *);
+    fun = print;
+    fun(&quot;123456&quot;);
+    (*fun)(&quot;123456&quot;);//这两种调用等价，但是第二种能明确表示出现在是通过指针调用
+    (*print)(&quot;123123&quot;);//print函数名本身就是一种指针，所以也可以这样用。
+    return 0;
+}
+</code></pre>
+<p>在main中定义了一个返回值为void，参数为const char* 的函数指针fun，之后令fun等于<br>
+print的函数地址，之后再通过fun指针调用print函数。<br>
+<strong>可知定义一个函数指针可以按如下方式：</strong></p>
+<pre><code class="language-cpp">//返回值类型 (*函数指针名)(参数类型列表)
+//例如
+int (*fun1)(int,int);//定义一个返回值为int类型，参数为两个int类型的函数指针，
+                     //这个指针只能指向返回值为int，参数为两个int的函数。
+int (*fun2)(int a,int b);    //与上相同，只是为了说明参数名写不写都可以
+double (*fun3)()     //定义一个返回值为double的，参数为空的函数指针
+void (*fun4)(void)   //定义一个返回值为void的，参数为空的函数指针,void写不写都可
+</code></pre>
+<h4 id="定义函数指针类型">定义函数指针类型</h4>
+<p><strong>定义函数指针类型直接在函数指针之前加上typedef即可</strong><br>
+例如<br>
+<code>typedef int (*operate)(int,int);</code>定义了一个类型operator，这个类型是一个函数<br>
+指针的类型。可以用于定义返回值为int，参数为两个int的函数指针，定义方式例如：<br>
+<code>operator op</code>，这样就定义了一个函数指针op。</p>
+<p>例子：</p>
+<pre><code class="language-cpp">#include &lt;iostream&gt;
+#include &lt;vector&gt;
+
+typedef int (*operate)(int,int);
+inline int ADD(int a,int b)
+{
+    std::cout&lt;&lt;a&lt;&lt;&quot;+&quot;&lt;&lt;b&lt;&lt;&quot;=&quot;;
+    return a+b;
+}
+
+inline int SUB(int a,int b)
+{
+    std::cout&lt;&lt;a&lt;&lt;&quot;-&quot;&lt;&lt;b&lt;&lt;&quot;=&quot;;
+    return a-b;
+}
+
+inline int MUL(int a,int b)
+{
+    std::cout&lt;&lt;a&lt;&lt;&quot;*&quot;&lt;&lt;b&lt;&lt;&quot;=&quot;;
+    return a*b;
+}
+
+inline int DIV(int a,int b)
+{
+    std::cout&lt;&lt;a&lt;&lt;&quot;/&quot;&lt;&lt;b&lt;&lt;&quot;=&quot;;
+    return a/b;
+}
+
+int main()
+{
+    using namespace std;
+    vector&lt;operate&gt; op(4);
+    op[0] = ADD;
+    op[1] = SUB;
+    op[2] = MUL;
+    op[3] = DIV;
+    for(auto fun:op)
+        cout &lt;&lt; fun(9,3)&lt;&lt;endl;
+}
+</code></pre>
+<p>在向量op中存放了四种函数指针，分别指向ADD，SUB，MUL，DIV函数，之后遍历调用<br>
+这四个函数</p>
+<p>类似的也可以用map实现根据按操作码调用的效果</p>
+<pre><code class="language-cpp">#include &lt;iostream&gt;
+#include &lt;map&gt;
+
+using namespace std;
+typedef int (*fun)(int,int);
+typedef enum{add_op,sub_op,mul_op,div_op} op;//操作码
+
+inline int ADD(int a,int b)
+{
+    return a+b;
+}
+
+inline int SUB(int a,int b)
+{
+    return a-b;
+}
+
+inline int MUL(int a,int b)
+{
+    return a*b;
+}
+
+inline int DIV(int a,int b)
+{
+    return a/b;
+}
+
+int main()
+{
+    map&lt;op,fun&gt; m;
+    m[op::add_op]=ADD;
+    m[op::sub_op]=SUB;
+    m[op::mul_op]=MUL;
+    m[op::div_op]=DIV;
+    cout&lt;&lt;m[add_op](3,4);
+}
+</code></pre>
+<p>在map m中使得函数和操作码 一 一 对 应，这样就可以通过操作码和map调用对应<br>
+函数。如果要实现类似效果我们一般用的是switch case语句，而此时直接查表，这样<br>
+就可以减少代码量，就不用写一大堆switch case来检查操作码</p>
+<h4 id="小实验用函数指针查看代码字节">【小实验】用函数指针查看代码字节</h4>
+<p>我们可以用过函数指针查看我们代码编译后的二进制字节<br>
+我们获取到函数指针之后，可以通过函数指针打印函数指针之后的字节<br>
+这样我们就获取了函数编译后的二进制形式<br>
+例如</p>
+<pre><code class="language-cpp">#include &lt;iostream&gt;
+
+using namespace std;
+
+int main()
+{
+    void* main_addr = (void *)main;
+    for(int i=0;i&lt;512;i++)
+    {
+        printf(&quot;%x\t&quot;,*((unsigned char*)main_addr+i));//用字节形式访问
+        if((i+1)%8==0)
+            cout&lt;&lt;endl;
+    }
+}
+</code></pre>
+<p>整个代码最关键的一句就是<br>
+<code>*((unsigned char*)main_addr+i))</code><br>
+这句话分为内外两个部分</p>
+<p>内部：<br>
+<code>(unsigned char*)main_addr</code> 和 <code>+i</code><br>
+外部：<br>
+*(内部)</p>
+<p>main_addr是个地址，而(unsigned char*)用于强制类型转化，(unsigned char*)也<br>
+就是表示用**字节大小(见注)**访问内存，而+i表示相对于main_addr偏移了多少个<br>
+(unsigned char)大小，也就是偏移量了多少字节大小。综上，内部就是一个地址，<br>
+表示用字节大小访问main_addr偏移i处的地址。<br>
+/<em>注：char是8位，去除符号后的unsigned char就是一般的字节</em>/<br>
+外部加上*号表示内部要求取出对应地址上的数据。而main_addr就是main函数地址，所以取出的是main函数的字节代码数据。</p>
+<h4 id="回调函数">回调函数</h4>
+<p>说白了也就是函数指针类型作为参数<br>
+例如：</p>
+<pre><code class="language-cpp">#include &lt;iostream&gt;
+
+void dog_eat()
+{
+    std::cout&lt;&lt;&quot;Dog is eating bone&quot;&lt;&lt;std::endl;
+}
+
+void cat_eat()
+{
+    std::cout&lt;&lt;&quot;Cat is eating fish&quot;&lt;&lt;std::endl;
+}
+
+void rabbit_eat()
+{
+    std::cout&lt;&lt;&quot;Rabbit is eating carrot&quot;&lt;&lt;std::endl;
+}
+
+void eat(void (*animal_eat)())
+{
+    animal_eat();
+}
+
+int main()
+{
+    eat(dog_eat);//传入不同函数指针，调用不同函数
+    eat(cat_eat);
+    eat(rabbit_eat);
+}
+</code></pre>
+<p>可以看出这和虚函数有异曲同工之妙，一个大的类中存在很多小类，不同小<br>
+类的行为不同，所以需要多态，而多态需要虚函数实现。但是在上面的例子<br>
+中也可以看出多态的影子。实际生产中使用回调函数和多态达到模块之间解<br>
+耦的目的</p>
+<h4 id="定义函数指针数组">定义函数指针数组</h4>
+<p>例如</p>
+<pre><code class="language-cpp">double* (*pa[3])(const double*,int)={f1,f2,f3};
+</code></pre>
+<p>定义一个容量为3函数指针数组，并初始化为f1、f2、f3。<br>
+调用数组中的函数，</p>
+<pre><code class="language-cpp">double *p1 = pa[0](1.5,3);
+double *p1 = (*pa[0])(1.5,3);//使用第一个函数
+</code></pre>
+<h2 id="指针补充">指针补充</h2>
+<h3 id="运算符优先级">运算符优先级</h3>
+<pre><code class="language-cpp">int (*a)[5];    //*与a先结合，说明这是一个指针。后面的[5]表示
+//这是一个指向长度为5*int的指针，若a = a+1，则a增长的是一个数组
+//的大小，也就是说a指向的是一片区域，而不是指向某个数据
+int *a[5];     //[]先与a结合，说明这是一个数组，数组中的数据为int*
+</code></pre>
+<h3 id="补充指针基础相关的参考文章">补充指针基础相关的参考文章</h3>
+<ul>
+<li><a href="https://blog.csdn.net/soonfly/article/details/51131141">《让你不再害怕指针——C指针详解(经典,非常详细)》-CSDN</a></li>
+</ul>
+<h2 id="附录运算符优先级表">附录：运算符优先级表</h2>
+<p><a href="https://blog.csdn.net/huangblog/article/details/8271791">【C语言运算符优先级（超详细）-author：embed_huang】</a></p>
+<table>
+    <tbody>
+        <tr>
+            <td>
+                <p><strong>优先级</strong></p>
+            </td>
+            <td>
+                <p><strong>运算符</strong></p>
+            </td>
+            <td>
+                <p><strong>名称或含义</strong></p>
+            </td>
+            <td>
+                <p><strong>使用形式</strong></p>
+            </td>
+            <td>
+                <p><strong>结合方向</strong></p>
+            </td>
+            <td>
+                <p><strong>说明</strong></p>
+            </td>
+        </tr>
+        <tr>
+            <td rowspan="4">
+                <p><strong>1</strong></p>
+            </td>
+            <td>
+                <p><strong><span>[]</span></strong></p>
+            </td>
+            <td>
+                <p>数组下标</p>
+            </td>
+            <td>
+                <p>数组名[常量表达式]</p>
+            </td>
+            <td rowspan="4">
+                <p>左到右</p>
+            </td>
+            <td>
+                <p>--</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <p><strong><span>()</span></strong></p>
+            </td>
+            <td>
+                <p>圆括号</p>
+            </td>
+            <td>
+                <p>(表达式）/函数名(形参表)</p>
+            </td>
+            <td>
+                <p>--</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <p><strong><span>.</span></strong></p>
+            </td>
+            <td>
+                <p>成员选择（对象）</p>
+            </td>
+            <td>
+                <p>对象.成员名</p>
+            </td>
+            <td>
+                <p>--</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <p><strong><span>-&gt;</span></strong></p>
+            </td>
+            <td>
+                <p>成员选择（指针）</p>
+            </td>
+            <td>
+                <p>对象指针-&gt;成员名</p>
+            </td>
+            <td>
+                <p>--</p>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="6"></td>
+        </tr>
+        <tr>
+            <td rowspan="9">
+                <p><strong>2</strong></p>
+            </td>
+            <td>
+                <p><strong><span>-</span></strong></p>
+            </td>
+            <td>
+                <p>负号运算符</p>
+            </td>
+            <td>
+                <p>-表达式</p>
+            </td>
+            <td rowspan="9">
+                <p><strong><span>右到左</span></strong></p>
+            </td>
+            <td rowspan="7">
+                <p>单目运算符</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <p><strong><span>~</span></strong></p>
+            </td>
+            <td>
+                <p>按位取反运算符</p>
+            </td>
+            <td>
+                <p>~表达式</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <p><strong><span>++</span></strong></p>
+            </td>
+            <td>
+                <p>自增运算符</p>
+            </td>
+            <td>
+                <p>++变量名/变量名++</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <p><strong><span>--</span></strong></p>
+            </td>
+            <td>
+                <p>自减运算符</p>
+            </td>
+            <td>
+                <p>--变量名/变量名--</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <p><strong><span>*</span></strong></p>
+            </td>
+            <td>
+                <p>取值运算符</p>
+            </td>
+            <td>
+                <p>*指针变量</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <p><strong><span>&amp;</span></strong></p>
+            </td>
+            <td>
+                <p>取地址运算符</p>
+            </td>
+            <td>
+                <p>&amp;变量名</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <p><strong><span>!</span></strong></p>
+            </td>
+            <td>
+                <p>逻辑非运算符</p>
+            </td>
+            <td>
+                <p>!表达式</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <p><strong><span>(</span><span>类型</span><span>)</span></strong></p>
+            </td>
+            <td>
+                <p>强制类型转换</p>
+            </td>
+            <td>
+                <p>(数据类型)表达式</p>
+            </td>
+            <td>
+                <p>--</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <p><strong><span>sizeof</span></strong></p>
+            </td>
+            <td>
+                <p>长度运算符</p>
+            </td>
+            <td>
+                <p>sizeof(表达式)</p>
+            </td>
+            <td>
+                <p>--</p>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="6"></td>
+        </tr>
+        <tr>
+            <td rowspan="3">
+                <p><strong>3</strong></p>
+            </td>
+            <td>
+                <p><strong><span>/</span></strong></p>
+            </td>
+            <td>
+                <p>除</p>
+            </td>
+            <td>
+                <p>表达式/表达式</p>
+            </td>
+            <td rowspan="3">
+                <p>左到右</p>
+            </td>
+            <td rowspan="3">
+                <p>双目运算符</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <p><strong><span>*</span></strong></p>
+            </td>
+            <td>
+                <p>乘</p>
+            </td>
+            <td>
+                <p>表达式*表达式</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <p><strong><span>%</span></strong></p>
+            </td>
+            <td>
+                <p>余数（取模）</p>
+            </td>
+            <td>
+                <p>整型表达式%整型表达式</p>
+            </td>
+        </tr>
+        <tr>
+            <td rowspan="2">
+                <p><strong>4</strong></p>
+            </td>
+            <td>
+                <p><strong><span>+</span></strong></p>
+            </td>
+            <td>
+                <p>加</p>
+            </td>
+            <td>
+                <p>表达式+表达式</p>
+            </td>
+            <td rowspan="2">
+                <p>左到右</p>
+            </td>
+            <td rowspan="2">
+                <p>双目运算符</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <p><strong><span>-</span></strong></p>
+            </td>
+            <td>
+                <p>减</p>
+            </td>
+            <td>
+                <p>表达式-表达式</p>
+            </td>
+        </tr>
+        <tr>
+            <td rowspan="2">
+                <p><strong>5</strong></p>
+            </td>
+            <td>
+                <p><strong><span>&lt;&lt;&nbsp;</span></strong></p>
+            </td>
+            <td>
+                <p>左移</p>
+            </td>
+            <td>
+                <p>变量&lt;&lt;表达式</p>
+            </td>
+            <td rowspan="2">
+                <p>左到右</p>
+            </td>
+            <td rowspan="2">
+                <p>双目运算符</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <p><strong><span>&gt;&gt;&nbsp;</span></strong></p>
+            </td>
+            <td>
+                <p>右移</p>
+            </td>
+            <td>
+                <p>变量&gt;&gt;表达式</p>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="6"></td>
+        </tr>
+        <tr>
+            <td rowspan="4">
+                <p><strong>6</strong></p>
+            </td>
+            <td>
+                <p><strong><span>&gt;&nbsp;</span></strong></p>
+            </td>
+            <td>
+                <p>大于</p>
+            </td>
+            <td>
+                <p>表达式&gt;表达式</p>
+            </td>
+            <td rowspan="4">
+                <p>左到右</p>
+            </td>
+            <td rowspan="4">
+                <p>双目运算符</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <p><strong><span>&gt;=</span></strong></p>
+            </td>
+            <td>
+                <p>大于等于</p>
+            </td>
+            <td>
+                <p>表达式&gt;=表达式</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <p><strong><span>&lt;&nbsp;</span></strong></p>
+            </td>
+            <td>
+                <p>小于</p>
+            </td>
+            <td>
+                <p>表达式&lt;表达式</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <p><strong><span>&lt;=</span></strong></p>
+            </td>
+            <td>
+                <p>小于等于</p>
+            </td>
+            <td>
+                <p>表达式&lt;=表达式</p>
+            </td>
+        </tr>
+        <tr>
+            <td rowspan="2">
+                <p><strong>7</strong></p>
+            </td>
+            <td>
+                <p><strong><span>==</span></strong></p>
+            </td>
+            <td>
+                <p>等于</p>
+            </td>
+            <td>
+                <p>表达式==表达式</p>
+            </td>
+            <td rowspan="2">
+                <p>左到右</p>
+            </td>
+            <td rowspan="2">
+                <p>双目运算符</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <p><strong><span>！</span><span>=</span></strong></p>
+            </td>
+            <td>
+                <p>不等于</p>
+            </td>
+            <td>
+                <p>表达式!= 表达式</p>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="6"></td>
+        </tr>
+        <tr>
+            <td>
+                <p><strong>8</strong></p>
+            </td>
+            <td>
+                <p><strong><span>&amp;</span></strong></p>
+            </td>
+            <td>
+                <p>按位与</p>
+            </td>
+            <td>
+                <p>表达式&amp;表达式</p>
+            </td>
+            <td>
+                <p>左到右</p>
+            </td>
+            <td>
+                <p>双目运算符</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <p><strong>9</strong></p>
+            </td>
+            <td>
+                <p><strong><span>^</span></strong></p>
+            </td>
+            <td>
+                <p>按位异或</p>
+            </td>
+            <td>
+                <p>表达式^表达式</p>
+            </td>
+            <td>
+                <p>左到右</p>
+            </td>
+            <td>
+                <p>双目运算符</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <p><strong>10</strong></p>
+            </td>
+            <td>
+                <p><strong><span>|</span></strong></p>
+            </td>
+            <td>
+                <p>按位或</p>
+            </td>
+            <td>
+                <p>表达式|表达式</p>
+            </td>
+            <td>
+                <p>左到右</p>
+            </td>
+            <td>
+                <p>双目运算符</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <p><strong>11</strong></p>
+            </td>
+            <td>
+                <p><strong><span>&amp;&amp;</span></strong></p>
+            </td>
+            <td>
+                <p>逻辑与</p>
+            </td>
+            <td>
+                <p>表达式&amp;&amp;表达式</p>
+            </td>
+            <td>
+                <p>左到右</p>
+            </td>
+            <td>
+                <p>双目运算符</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <p><strong>12</strong></p>
+            </td>
+            <td>
+                <p><strong><span>||</span></strong></p>
+            </td>
+            <td>
+                <p>逻辑或</p>
+            </td>
+            <td>
+                <p>表达式||表达式</p>
+            </td>
+            <td>
+                <p>左到右</p>
+            </td>
+            <td>
+                <p>双目运算符</p>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="6"></td>
+        </tr>
+        <tr>
+            <td>
+                <p><strong>13</strong></p>
+            </td>
+            <td>
+                <p><strong><span>?:</span></strong></p>
+            </td>
+            <td>
+                <p>条件运算符</p>
+            </td>
+            <td>
+                <p>表达式1?</p>
+                <p>表达式2: 表达式3</p>
+            </td>
+            <td>
+                <p><strong><span>右到左</span></strong></p>
+            </td>
+            <td>
+                <p><span>三目运算符</span></p>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="6"></td>
+        </tr>
+        <tr>
+            <td rowspan="11">
+                <p><strong>14</strong></p>
+            </td>
+            <td>
+                <p><strong><span>=</span></strong></p>
+            </td>
+            <td>
+                <p>赋值运算符</p>
+            </td>
+            <td>
+                <p>变量=表达式</p>
+            </td>
+            <td rowspan="11">
+                <p><strong><span>右到左</span></strong></p>
+            </td>
+            <td>
+                <p>--</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <p><strong><span>/=</span></strong></p>
+            </td>
+            <td>
+                <p>除后赋值</p>
+            </td>
+            <td>
+                <p>变量/=表达式</p>
+            </td>
+            <td>
+                <p>--</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <p><strong><span>*=</span></strong></p>
+            </td>
+            <td>
+                <p>乘后赋值</p>
+            </td>
+            <td>
+                <p>变量*=表达式</p>
+            </td>
+            <td>
+                <p>--</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <p><strong><span>%=</span></strong></p>
+            </td>
+            <td>
+                <p>取模后赋值</p>
+            </td>
+            <td>
+                <p>变量%=表达式</p>
+            </td>
+            <td>
+                <p>--</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <p><strong><span>+=</span></strong></p>
+            </td>
+            <td>
+                <p>加后赋值</p>
+            </td>
+            <td>
+                <p>变量+=表达式</p>
+            </td>
+            <td>
+                <p>--</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <p><strong><span>-=</span></strong></p>
+            </td>
+            <td>
+                <p>减后赋值</p>
+            </td>
+            <td>
+                <p>变量-=表达式</p>
+            </td>
+            <td>
+                <p>--</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <p><strong><span>&lt;&lt;=</span></strong></p>
+            </td>
+            <td>
+                <p>左移后赋值</p>
+            </td>
+            <td>
+                <p>变量&lt;&lt;=表达式</p>
+            </td>
+            <td>
+                <p>--</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <p><strong><span>&gt;&gt;=</span></strong></p>
+            </td>
+            <td>
+                <p>右移后赋值</p>
+            </td>
+            <td>
+                <p>变量&gt;&gt;=表达式</p>
+            </td>
+            <td>
+                <p>--</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <p><strong><span>&amp;=</span></strong></p>
+            </td>
+            <td>
+                <p>按位与后赋值</p>
+            </td>
+            <td>
+                <p>变量&amp;=表达式</p>
+            </td>
+            <td>
+                <p>--</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <p><strong><span>^=</span></strong></p>
+            </td>
+            <td>
+                <p>按位异或后赋值</p>
+            </td>
+            <td>
+                <p>变量^=表达式</p>
+            </td>
+            <td>
+                <p>--</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <p><strong><span>|=</span></strong></p>
+            </td>
+            <td>
+                <p>按位或后赋值</p>
+            </td>
+            <td>
+                <p>变量|=表达式</p>
+            </td>
+            <td>
+                <p>--</p>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="6"></td>
+        </tr>
+        <tr>
+            <td>
+                <p><strong>15</strong></p>
+            </td>
+            <td>
+                <p><strong><span>，</span></strong></p>
+            </td>
+            <td>
+                <p>逗号运算符</p>
+            </td>
+            <td>
+                <p>表达式,表达式,…</p>
+            </td>
+            <td>
+                <p>左到右</p>
+            </td>
+            <td>
+                <p>--</p>
+            </td>
+        </tr>
+    </tbody>
+</table>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[4.内联函数]]></title>
+        <id>https://xy-gif.github.io/post/4nei-lian-han-shu/</id>
+        <link href="https://xy-gif.github.io/post/4nei-lian-han-shu/">
+        </link>
+        <updated>2023-04-19T05:03:33.000Z</updated>
+        <content type="html"><![CDATA[<h1 id="4内联函数">4.内联函数</h1>
+<h2 id="简单介绍">简单介绍</h2>
+<p>使用inline修饰函数，当函数较为简单时会直接把函数编译到调用位置，<br>
+这样就省下了压栈/建栈/退栈等的开销，提高了速度。但是当内联有递归/循环等复杂结构时就还是会引起调用，也就是说有复杂结构的内联函数和普通函数没啥区别。<br>
+例如：</p>
+<pre><code class="language-cpp">inline int add(int a,int b){return a+b;}
+int inline add(int a,int b){return a+b;}
+</code></pre>
+<p>以上这两种方式在g++中都可以，但是我们一般习惯用第一种，这样第一眼就能看出是内联函数</p>
+<h2 id="实验观察内联优化">实验观察内联优化</h2>
+<p>内联函数在g++中至少要在O1优化下才能看到</p>
+<pre><code class="language-cpp">#include&lt;stdio.h&gt;
+inline int add(int a,int b)
+{
+    return a+b;
+}
+
+int main()
+{
+    int a,b;
+    scanf(&quot;%d,%d&quot;,&amp;a,&amp;b);
+    int x = add(a,b);
+    printf(&quot;%d&quot;,x);
+}
+</code></pre>
+<p>上述代码在g++的 -O0 -m32选项下进行编译可得出如下汇编</p>
+<pre><code class="language-asm">add(int, int):
+        push    ebp
+        mov     ebp, esp
+        mov     edx, DWORD PTR [ebp+8]
+        mov     eax, DWORD PTR [ebp+12]
+        add     eax, edx
+        pop     ebp
+        ret
+.LC0:
+        .string &quot;%d,%d&quot;
+.LC1:
+        .string &quot;%d&quot;
+main:
+        lea     ecx, [esp+4]
+        and     esp, -16
+        push    DWORD PTR [ecx-4]
+        push    ebp
+        mov     ebp, esp
+        push    ecx
+        sub     esp, 20
+        sub     esp, 4
+        lea     eax, [ebp-20]
+        push    eax
+        lea     eax, [ebp-16]
+        push    eax
+        push    OFFSET FLAT:.LC0
+        call    __isoc99_scanf
+        add     esp, 16
+        mov     edx, DWORD PTR [ebp-20]
+        mov     eax, DWORD PTR [ebp-16]
+        sub     esp, 8
+        push    edx
+        push    eax
+        call    add(int, int)        ;此处调用了add函数
+        add     esp, 16
+        mov     DWORD PTR [ebp-12], eax
+        sub     esp, 8
+        push    DWORD PTR [ebp-12]
+        push    OFFSET FLAT:.LC1
+        call    printf
+        add     esp, 16
+        mov     eax, 0
+        mov     ecx, DWORD PTR [ebp-4]
+        leave
+        lea     esp, [ecx-4]
+        ret
+</code></pre>
+<p>上述汇编中，很容易看出add函数还存在，而且在main函数压栈调用了add函数</p>
+<p>之后我们开启O1优化 g++在-O1 -m32选项下编译为如下结果</p>
+<pre><code class="language-asm">.LC0:
+        .string &quot;%d,%d&quot;
+.LC1:
+        .string &quot;%d&quot;
+main:
+        lea     ecx, [esp+4]
+        and     esp, -16
+        push    DWORD PTR [ecx-4]
+        push    ebp
+        mov     ebp, esp
+        push    ecx
+        sub     esp, 24
+        lea     eax, [ebp-16]
+        push    eax
+        lea     eax, [ebp-12]
+        push    eax
+        push    OFFSET FLAT:.LC0
+        call    __isoc99_scanf
+        add     esp, 8
+        mov     eax, DWORD PTR [ebp-12]    ;这两句话就是
+        add     eax, DWORD PTR [ebp-16]    ;内联后的样子
+        push    eax
+        push    OFFSET FLAT:.LC1
+        call    printf
+        add     esp, 16
+        mov     eax, 0
+        mov     ecx, DWORD PTR [ebp-4]
+        leave
+        lea     esp, [ecx-4]
+        ret
+</code></pre>
+<p>可以发现add函数体直接没了，而调用的地方直接加上了，这样减少了指令执行提升了速度。</p>
+<p><em>注意：上述实验为什么要用scanf获取a和b而不是直接用常量？因为编译器优化时会直接看你最后做出了什么行为，当发现这个程序的行为仅仅是打印一个a+b，且a和b此时为常量，编译器就会自己算出a+b然后直接把a+b压栈打印，中间根本不会执行加法之类的。例如a=3;b=4;优化后编译的会直接把7压栈调用printf函数，根本不会用到add指令。所以不能让编译器知道a、b的值，必须用户输入后它才能知道，这样它就必须计算了，我们才能看到内联的效果</em></p>
+<h2 id="其它注意点">其它注意点</h2>
+<ol>
+<li>虚函数能否内联？<a href="https://github.com/huihut/interview">原文地址-github-huihut/interview</a><br>
+虚函数可以是内联函数，内联是可以修饰虚函数的，但是当虚函数表现多态性的时候不能内联。<br>
+理由如下：内联是在发生在编译期间，编译器会自主选择内联，而虚函数的多态性在运行期，编译器无法知道运行期调用哪个代码，因此虚函数表现为多态性时（运行期）不可以内联。 inline virtual唯一可以内联的时候是：编译器知道所调用的对象是哪个类（如 Base::who()），这只有在编译器具有实际对象而不是对象的指针或引用时才会发生。</li>
+</ol>
+<pre><code class="language-cpp">#include &lt;iostream&gt;  
+using namespace std;
+class Base
+{
+public:
+   inline virtual void who()
+   {
+   	cout &lt;&lt; &quot;I am Base\n&quot;;
+   }
+   virtual ~Base() {}
+};
+class Derived : public Base
+{
+public:
+   inline void who()  // 不写inline时隐式内联
+   {
+   	cout &lt;&lt; &quot;I am Derived\n&quot;;
+   }
+};
+
+int main()
+{
+   // 此处的虚函数 who()，是通过类（Base）的具体对象（b）来调用的，
+   // 编译期间就能确定了，所以它可以是内联的，但最终是否内联取决于编译器。 
+   Base b;
+   b.who();
+
+   // 此处的虚函数是通过指针调用的，呈现多态性，需要在运行时期间才能确定，
+   // 所以不能为内联。  
+   Base *ptr = new Derived();
+   ptr-&gt;who();
+
+   // 因为Base有虚析构函数（virtual ~Base() {}），
+   //所以 delete 时，会先调用派生类（Derived）析构函数，
+   //再调用基类（Base）析构函数，防止内存泄漏。
+   delete ptr;
+   ptr = nullptr;
+
+   system(&quot;pause&quot;);
+   return 0;
+} 
+</code></pre>
+<ol start="2">
+<li>内联函数缺点</li>
+</ol>
+<p>优点</p>
+<p>内联函数同宏函数一样将在被调用处进行代码展开，省去了参数压栈、栈帧开辟与回收，结果返回等，从而提高程序运行速度。<br>
+内联函数相比宏函数来说，在代码展开时，会做安全检查或自动类型转换（同普通函数），而宏定义则不会。<br>
+在类中声明同时定义的成员函数，自动转化为内联函数，因此内联函数可以访问类的成员变量，宏定义则不能。<br>
+内联函数在运行时可调试，而宏定义不可以。</p>
+<p>缺点<br>
+代码膨胀。内联是以代码膨胀（复制）为代价，消除函数调用带来的开销。如果执行函数体内代码的时间，相比于函数调用的开销较大，那么效率的收获会很少。另一方面，每一处内联函数的调用都要复制代码，将使程序的总代码量增大，消耗更多的内存空间。<br>
+inline 函数无法随着函数库升级而升级。inline函数的改变需要重新编译，不像 non-inline 可以直接链接。<br>
+是否内联，程序员不可控。内联函数只是对编译器的建议，是否对函数内联，决定权在于编译器。</p>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[5.引用]]></title>
+        <id>https://xy-gif.github.io/post/5yin-yong/</id>
+        <link href="https://xy-gif.github.io/post/5yin-yong/">
+        </link>
+        <updated>2023-04-18T05:05:09.000Z</updated>
+        <content type="html"><![CDATA[<h1 id="5引用">5.引用</h1>
+<h2 id="创建引用变量">创建引用变量</h2>
+<pre><code>int my_value;
+int &amp;my_value_ref = my_value;
+</code></pre>
+<p>定义一个引用变量my_value_ref指向my_value<br>
+当my_value_ref改变时my_value也会改变，也就是说引用是变量对象的一个别名，当对象改变时，那么指向它的引用变量也会改变。</p>
+<h2 id="引用与指针">引用与指针</h2>
+<p>引用是一种指针，但不是int *p这种指针，可以说它是一种更安全跟高级的指针。这也使得引用和指针的行为上有所不同（别直接把引用和指针混用）<br>
+我们用以下一段代码来理解一下指针和引用的区别</p>
+<pre><code class="language-cpp">int main()
+{
+        push    ebp
+        mov     ebp, esp
+        sub     esp, 32        //进入函数
+    
+    int a=10;
+        mov     DWORD PTR [ebp-24], 10//变量a赋值
+        
+    int &amp;b=a;
+        lea     eax, [ebp-24]
+        mov     DWORD PTR [ebp-4], eax//引用b指向a
+    
+    int *c = &amp;a;
+        lea     eax, [ebp-24]
+        mov     DWORD PTR [ebp-28], eax//指针c指向a
+    
+    int d=a;
+        mov     eax, DWORD PTR [ebp-24]
+        mov     DWORD PTR [ebp-32], eax//变量d与a相等
+    
+    void *addr_a=&amp;a;
+        lea     eax, [ebp-24]
+        mov     DWORD PTR [ebp-8], eax//取a地址
+        
+    void *addr_b=&amp;b;
+        mov     eax, DWORD PTR [ebp-4]
+        mov     DWORD PTR [ebp-12], eax//取b地址
+    
+    void *addr_c=&amp;c;
+        lea     eax, [ebp-28]
+        mov     DWORD PTR [ebp-16], eax//取c地址
+    
+    void *addr_d=&amp;d;
+        lea     eax, [ebp-32]
+        mov     DWORD PTR [ebp-20], eax//取d地址
+}
+        mov     eax, 0
+        leave
+        ret                            //退出函数
+</code></pre>
+<p>在<strong>创建引用b和指针c指向a的时候，可以看出他们的代码是相同的</strong><br>
+但是可以观察到<strong>当取b和c的地址</strong>时，可以发现：<br>
+对于<strong>引用b取出的是所指向变量a的地址，用的是mov指令</strong>。<br>
+对于<strong>指针c取出的就是c本身的地址，用的是lea指令</strong>。<br>
+由此可以看出在C++中通过编译技术使得引用变量存储空间透明化，就好像看不出引用占用了存储空间，仅仅是将引用作为别名使用。所以由此不要直接认为引用是个变量，认为它是个别名更好一些。</p>
+<h2 id="引用作参数">引用作参数</h2>
+<p>引用做参数本质就是指针做参数，只是在调用方式上有一定区别，因为指针做参数要传入地址可能要加&amp;，而引用做参数不需要加<br>
+放一份代码，如下，可以看出两个swap基本没区别，调用时其实也没区别</p>
+<pre><code class="language-cpp">void swap(int *a,int *b)
+{
+    int t = *a;
+    *a=*b;
+    *b=t;
+}
+
+void swap(int &amp;a,int &amp;b)
+{
+    int t = a;
+    a=b;
+    b=t;
+}
+
+int main()
+{
+    int a=1,b=2;
+    swap(a,b);
+    swap(&amp;a,&amp;b);
+}
+</code></pre>
+<pre><code class="language-asm">swap(int*, int*):
+        push    ebp
+        mov     ebp, esp
+        sub     esp, 16
+        mov     eax, DWORD PTR [ebp+8]
+        mov     eax, DWORD PTR [eax]
+        mov     DWORD PTR [ebp-4], eax
+        mov     eax, DWORD PTR [ebp+12]
+        mov     edx, DWORD PTR [eax]
+        mov     eax, DWORD PTR [ebp+8]
+        mov     DWORD PTR [eax], edx
+        mov     eax, DWORD PTR [ebp+12]
+        mov     edx, DWORD PTR [ebp-4]
+        mov     DWORD PTR [eax], edx
+        nop
+        leave
+        ret
+swap(int&amp;, int&amp;):
+        push    ebp
+        mov     ebp, esp
+        sub     esp, 16
+        mov     eax, DWORD PTR [ebp+8]
+        mov     eax, DWORD PTR [eax]
+        mov     DWORD PTR [ebp-4], eax
+        mov     eax, DWORD PTR [ebp+12]
+        mov     edx, DWORD PTR [eax]
+        mov     eax, DWORD PTR [ebp+8]
+        mov     DWORD PTR [eax], edx
+        mov     eax, DWORD PTR [ebp+12]
+        mov     edx, DWORD PTR [ebp-4]
+        mov     DWORD PTR [eax], edx
+        nop
+        leave
+        ret
+main:
+        push    ebp
+        mov     ebp, esp
+        sub     esp, 16
+        mov     DWORD PTR [ebp-4], 1
+        mov     DWORD PTR [ebp-8], 2
+        lea     eax, [ebp-8]
+        push    eax
+        lea     eax, [ebp-4]
+        push    eax
+        call    swap(int&amp;, int&amp;)
+        add     esp, 8
+        lea     eax, [ebp-8]
+        push    eax
+        lea     eax, [ebp-4]
+        push    eax
+        call    swap(int*, int*)
+        add     esp, 8
+        mov     eax, 0
+        leave
+        ret
+</code></pre>
+<p>当参数为多成员结构体或者是多成员类时，引用的速度将会快于直接使用变量作参数，<strong>因为当多成员结构体直接传递时会将成员一个一个压栈，比较耗费时间，而引用直接就一个结构体地址入栈，所以速度快</strong>。<br>
+当不希望函数改变引用的值时可以这样写<br>
+<code>void fun(const int &amp;x)</code>这样传入的x就是只读状态，就不可以修改，这就和直接传参差效果不多了，因为这样不会影响函数外面的x。但也有区别，就是在fun中x是不能改的。但也没事，实在想改可以在fun中复制一下再改。</p>
+<h2 id="返回引用">返回引用</h2>
+<p>函数可以返回引用变量，但是要注意变量的生命周期<br>
+比如，下面返回的就是错的</p>
+<pre><code class="language-cpp">int &amp;fun()
+{
+    int i=10;
+    return i;
+}
+</code></pre>
+<p>i在fun结束时就没了，所以返回其引用调用者也不大可能收到（对于不同编译器处理方式不同，g++编译器基本肯定收不到，因为g++若发现返回的是局部变量就会把返回值设为0）</p>
+<p>返回引用时一般返回变量生命周期等于程序生命周期的变量，如栈中变量、全局变量（和静态），这些变量返回时可以的。<br>
+例如：</p>
+<pre><code class="language-cpp">#include&lt;iostream&gt;
+
+int &amp;counter()
+{
+    static int count=0;
+    count++;
+    return count;
+}
+
+
+int &amp;get_int()
+{
+    int *p = new int;
+    *p=10;
+    return *p;
+}
+
+int main()
+{
+    int a=10;
+    int b = counter();
+    int c= get_int();//看汇编代码可以知道这不太好，因为丢失了栈地址，造成了内存的泄露。
+}
+</code></pre>
+<pre><code class="language-asm">counter():
+        push    ebp
+        mov     ebp, esp
+        mov     eax, DWORD PTR counter()::count
+        add     eax, 1
+        mov     DWORD PTR counter()::count, eax
+        mov     eax, OFFSET FLAT:counter()::count
+        pop     ebp
+        ret
+get_int():
+        push    ebp
+        mov     ebp, esp
+        sub     esp, 24
+        sub     esp, 12
+        push    4
+        call    operator new(unsigned int)
+        add     esp, 16
+        mov     DWORD PTR [ebp-12], eax
+        mov     eax, DWORD PTR [ebp-12]
+        mov     DWORD PTR [eax], 10
+        mov     eax, DWORD PTR [ebp-12]
+        leave
+        ret
+main:
+        push    ebp
+        mov     ebp, esp
+        and     esp, -16
+        sub     esp, 16
+        mov     DWORD PTR [esp+12], 10
+        call    counter()
+        mov     eax, DWORD PTR [eax]
+        mov     DWORD PTR [esp+8], eax
+        call    get_int()
+        mov     eax, DWORD PTR [eax]
+        mov     DWORD PTR [esp+4], eax
+        mov     eax, 0
+        leave
+        ret
+</code></pre>
+<h2 id="引用与多态">引用与多态</h2>
+<p>父类引用可以指向子类对象，这与父类指针指向子类对象基本差不多。</p>
+<h2 id="附录1常见关键字等组合使用">附录1：常见关键字等组合使用</h2>
+<pre><code>static int *p;    //定义一个静态指针变量p
+int static *p;    //定义一个静态指针变量p，同上
+int* static p;    //非法定义
+
+const int *p;    //定义一个常量指针p，不能通过p修改所指向的变量，也就是说*p是只读的
+int const *p;    //与上相同,*p是只读的
+int* const p;    //定义一个指针常量p，不能修改p的值（也就是指向），也就是说p是只读的
+
+static const int *p;    //定义一个静态常量指针p，*p是只读的
+static int const *p;    //同上
+const static int *p;    //同上
+const int static *p;    //同上
+int const static *p;    //同上
+int static const  *p;   //同上
+
+static int* const p;    //定义一个静态的指针常量，p是只读的
+int static * const p;   //同上
+
+const int* static p;    //非法定义
+</code></pre>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[6. C++-Java Lambda表达式]]></title>
+        <id>https://xy-gif.github.io/post/6-c-java-lambda-biao-da-shi/</id>
+        <link href="https://xy-gif.github.io/post/6-c-java-lambda-biao-da-shi/">
+        </link>
+        <updated>2023-04-18T04:06:14.000Z</updated>
+        <content type="html"><![CDATA[<h1 id="6-c-java-lambda表达式">6. C++-Java Lambda表达式</h1>
+<h2 id="c-lambda表达式">C++ Lambda表达式</h2>
+<h3 id="基本">基本</h3>
+<p>格式：<br>
+<code>[capture list](paramenters) mutable throw()-&gt;return-type{functionbody}</code></p>
+<ol>
+<li>[capture list]是捕获列表，用于捕获上下文中的变量以供Lambda表达式使用</li>
+<li>(paramenters) 是参数列表，用于定义传入的参数</li>
+<li>mutable 可变规格。mutable修饰符， 默认情况下Lambda函数总是一个const函数，mutable可以取消其常量性。在使用该修饰符时，参数列表不可省略（即使参数为空）。</li>
+<li>throw() 异常说明。用于Lamdba表达式内部函数抛出异常。</li>
+<li>return-type：追踪返回类型形式声明函数的返回类型。我们可以在不需要返回值的时候也可以连同符号”-&gt;”一起省略。此外，在返回类型明确的情况下，也可以省略该部分，让编译器对返回类型进行推导。</li>
+<li>{functionbody}：函数体，里面写函数的具体实现</li>
+</ol>
+<p>例1：把无捕获的lambda表达式赋给函数指针，然后再调用。</p>
+<pre><code class="language-cpp">#include&lt;iostream&gt;
+
+int main()
+{
+
+    int (*add)(int,int) = [](int a,int b)-&gt;int{return a+b;};
+//    int (*add)(int,int) = [](int a,int b){return a+b;};当返回值明确时可以不写
+    std::cout&lt;&lt;add(10,20);
+}
+</code></pre>
+<p>例2：在回调函数中传入lambda表达式作为函数指针参数。</p>
+<pre><code class="language-cpp">#include&lt;iostream&gt;
+
+int fun(int (*op)(int,int),int a,int b)
+{
+    return op(a,b);
+}
+
+int main()
+{
+    int c = fun([](int a,int b)-&gt;int{return a+b;},20,30);
+    std::cout&lt;&lt;c;
+}
+</code></pre>
+<p>注意：当捕获列表中有捕获的值时，就不可以定义函数指针指向lambda表达式了<br>
+比如，下面的写法就是错的：</p>
+<pre><code class="language-cpp">    int a;
+    void (*fun)() = [&amp;a]()-&gt;void{a=10; return;};
+</code></pre>
+<p>此时可以用auto类型定义变量指向lambda表达式，上述代码就可以改为</p>
+<pre><code class="language-cpp">    int a;
+    auto fun = [&amp;a]()-&gt;void{a=10; return;};
+</code></pre>
+<h3 id="捕获列表">捕获列表</h3>
+<ul>
+<li><code>[]</code>表示不捕获任何变量</li>
+<li><code>[var]</code>表示值传递方式捕获变量var</li>
+<li><code>[=]</code>表示值传递方式捕获所有父作用域的变量（包括this）</li>
+<li><code>[&amp;var]</code>表示引用传递捕捉变量var</li>
+<li><code>[&amp;]</code>表示引用传递方式捕捉所有父作用域的变量（包括this）</li>
+<li><code>[this]</code>表示值传递方式捕捉当前的this指针</li>
+<li><code>[=, &amp;]</code> 拷贝与引用混合
+<ul>
+<li><code>[=, &amp;a, &amp;b]</code>表示以引用传递的方式捕捉变量a和b，以值传递方式捕捉其它所有变量。</li>
+</ul>
+</li>
+<li><code>[&amp;, a, this]</code>表示以值传递的方式捕捉变量a和this，引用传递方式捕捉其它所有变量。</li>
+<li><code>[=,a]</code>这里已经以值传递方式捕捉了所有变量，但是重复捕捉a了，会报错的；</li>
+<li><code>[&amp;,&amp;this]</code>这里&amp;已经以引用传递方式捕捉了所有变量，再捕捉this也是一种重复。</li>
+</ul>
+<h3 id="mutable修饰符">mutable修饰符</h3>
+<p><code>mutable</code>修饰符， 默认情况下Lambda函数总是一个const函数，<code>mutable</code>可以取消其常量性。在使用该修饰符时，参数列表不可省略（即使参数为空）。</p>
+<pre><code class="language-cpp">#include &lt;iostream&gt;
+using namespace std;
+
+int main()
+{
+   int m = 0;
+   int n = 0;
+   [&amp;, n] (int a) mutable { m = ++n + a; }(4);
+   cout &lt;&lt; m &lt;&lt; endl &lt;&lt; n &lt;&lt; endl;
+}
+</code></pre>
+<h3 id="异常">异常</h3>
+<p>在MSDN的异常规范中，明确指出异常规范是在 C++11 中弃用的 C++ 语言功能。因此不建议使用。</p>
+<h2 id="java-lambda表达式">Java Lambda表达式</h2>
+<p>Java的Lambda表达式必须依赖于函数式接口。<br>
+函数式接口就是只有一个方法的接口，在接口前面最好加上@FunctionalInterface批注。<br>
+例如，定义一个函数式接口Op，表示操作：</p>
+<pre><code class="language-java">package lambda.test;
+
+@FunctionalInterface
+public interface Op {
+	int op(int a,int b);
+}
+</code></pre>
+<p>注意Op中只有一个方法op没有其它的方法了。当存在这种只有一个方法的接口我们称之为函数式接口，这种接口可以通过类来实现，也可以通过lambda表达式实现，例如下面的main函数中就直接实现了函数式接口。</p>
+<pre><code class="language-java">package lambda.test;
+import lambda.test.Op;
+
+
+public class TestMain {
+
+	public static void main(String[] args) {
+		Op operator = (int a,int b)-&gt;{return a+b;};
+		System.out.println(operator.op(10, 20));
+	}
+
+}
+</code></pre>
+<p>Java的lambda表达式写法与C++类似，但是也有所不同，<br>
+Java的没有返回值类型和捕获列表。<br>
+其中没有返回值类型很好理解，因为这是对接口中函数的实现，所以接口的返回值类型就是lambda表达式的返回值类型。</p>
+<p>当然上述的代码也可以这样写，这样同样可以重写</p>
+<pre><code class="language-java">package lambda.test;
+import lambda.test.Op;
+
+public class TestMain {
+	public static void main(String[] args) {
+		Op operator = new Op() {
+			@Override
+			public int op(int a,int b)
+			{
+				return a+b;
+			};
+		};
+		
+		System.out.println(operator.op(10, 20));
+	}
+
+}
+</code></pre>
+<p>总结：Java Lambda表达式写法：(参数列表)-&gt;{函数体}</p>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[7.变量类型和连接性]]></title>
+        <id>https://xy-gif.github.io/post/7bian-liang-lei-xing-he-lian-jie-xing/</id>
+        <link href="https://xy-gif.github.io/post/7bian-liang-lei-xing-he-lian-jie-xing/">
+        </link>
+        <updated>2023-04-18T03:07:13.000Z</updated>
+        <content type="html"><![CDATA[<h1 id="7变量类型和连接性">7.变量类型和连接性</h1>
+<h2 id="变量类型">变量类型</h2>
+<p><strong>变量分类及特点：</strong></p>
+<table>
+<thead>
+<tr>
+<th>变量类型</th>
+<th>变量位置</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>局部变量（自动变量）</td>
+<td>当前函数栈中，在ebp~esp之间，一般用ebp-n访问</td>
+</tr>
+<tr>
+<td>寄存器变量</td>
+<td>存在某个寄存器中，但在C++17中弃用了会报警告，不推荐使用</td>
+</tr>
+<tr>
+<td>静态变量</td>
+<td>存在于.data段中</td>
+</tr>
+<tr>
+<td>全局变量</td>
+<td>存在于.data段中</td>
+</tr>
+</tbody>
+</table>
+<h2 id="变量连接性及其原理">变量连接性及其原理</h2>
+<h3 id="连接性">连接性</h3>
+<table>
+<thead>
+<tr>
+<th>变量类型</th>
+<th>作用域和生命周期</th>
+<th>连接性</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>局部变量（自动变量）</td>
+<td>作用于当前代码块，函数结束时就消失</td>
+<td>无</td>
+</tr>
+<tr>
+<td>寄存器变量（只能用于局部）</td>
+<td>作用于当前代码块，函数结束时就消失</td>
+<td>无</td>
+</tr>
+<tr>
+<td>静态局部变量</td>
+<td>作用于当前代码块，函数结束时也不消失，整个程序结束才会消失</td>
+<td>无</td>
+</tr>
+<tr>
+<td>静态全局变量</td>
+<td>作用于当前文件，整个程序结束才会消失</td>
+<td>内部</td>
+</tr>
+<tr>
+<td>一般全局变量</td>
+<td>作用于所有引入它文件，整个程序结束才会消失</td>
+<td>外部</td>
+</tr>
+</tbody>
+</table>
+<h3 id="原理以x86-g-32bit为例说明">原理[以(x86)-(g++)-(32bit)为例说明]</h3>
+<h4 id="局部变量和寄存器变量">局部变量和寄存器变量</h4>
+<p>局部变量存到栈中，以ebp为栈基，以esp为栈的游标(就是栈活动的那一端)，寄存器变量直接到寄存器中。<br>
+<strong>在退出函数时函数的栈会被撤销</strong>。<br>
+<strong>而寄存器的内容会被恢复变成进入函数之前的样子</strong>，<br>
+例如进入函数之前ebx=10，进入函数时使用ebx作变量，退出函数时还要把ebx恢复成10。<br>
+所以局部变量和寄存器变量在函数结束时就消失了。<br>
+也就是说它们的生命周期不长，所以不能有连接性。<br>
+要不然就可能出现连接这个变量的函数还没用它，它就消亡了的情况。<br>
+上面两个比较易于理解，不再赘述</p>
+<h4 id="静态和全局">静态和全局</h4>
+<p>下面着重描述如下三个链接性的原理<br>
+静态局部变量、静态全局变量、一般全局变量<br>
+现有如下代码<code>s1.cpp</code></p>
+<pre><code class="language-cpp">static int x=10;
+int y=20;
+int main()
+{
+	static int z=30;
+	return 0;
+}
+</code></pre>
+<p>其中<br>
+x是静态全局变量<br>
+y是一般全局变量<br>
+z是静态局部变量<br>
+用如下指令编译成汇编语言<br>
+<code>g++ s1.cpp -S -m32 -O0 -o s1.s</code><br>
+<code>s1.s</code>如下</p>
+<pre><code class="language-asm">	.file	&quot;s1.cpp&quot;
+	.data
+	.align 4
+__ZL1x:
+	.long	10
+	.globl	_y
+	.align 4
+_y:
+	.long	20
+	.def	___main;	.scl	2;	.type	32;	.endef
+	.text
+	.globl	_main
+	.def	_main;	.scl	2;	.type	32;	.endef
+_main:
+	pushl	%ebp
+	movl	%esp, %ebp
+	andl	$-16, %esp
+	call	___main
+	movl	$0, %eax
+	leave
+	ret
+	.data
+	.align 4
+__ZZ4mainE1z:
+	.long	30
+	.ident	&quot;GCC: (tdm64-1) 4.9.2&quot;
+</code></pre>
+<p>简单分析可以得出x、y、z对应的汇编语句如下</p>
+<pre><code>static int x=10;
+对应
+	.data
+	.align 4
+__ZL1x:
+	.long	10
+
+
+int y=20;
+对应
+	.globl	_y   ;注意这也是在.data段中，标志就是x上面的那个.data
+	.align 4
+_y:
+	.long	20
+
+
+{
+	static int z=30;
+}
+	.data
+	.align 4
+__ZZ4mainE1z:
+	.long	30
+</code></pre>
+<p>明显可以看出x、y、z都在数据段中，所以生命周期是直到程序结束才消失<br>
+且<strong>y被.globl修饰过所以可以外部文件可以看到</strong><br>
+<strong>而x和z没有被.globl修饰过所以外部文件看不到</strong><br>
+同时在z的汇编变量__ZZ4mainE1z上有main修饰表示这是main中的一个变量，<br>
+当编译器在编译时发现其它函数使用了z就会报错导致编译不通过。</p>
+<h2 id="补充汇编语言中的globalglobl和extern">补充汇编语言中的global(globl)和extern：</h2>
+<p>汇编语言中的global表示让所有文件都看得到某个符号<br>
+例如上述例子中有<code>.globl	_main</code>表示所有程序都能看到main函数，所以main函数只能有一个。<br>
+而当我们想使用一些外部文件的函数或者是全局变量时，我们就可以使用<code>extern</code>表示这个符号来源于外部文件，extern只能修饰外部global修饰过的符号，否则没用。</p>
+<p>例如有如下工程</p>
+<pre><code class="language-asm">;hello.s
+section .data
+    hello_str db &quot;hello&quot;,0x0a,0
+
+global _hello    ;表示_hello是个全局的符号，这样其它文件才能看到_hello函数才能调用它，若没有加global则外部文件看不到，外部文件就算用extern也看不到。
+extern _printf   ;表示_printf是个外部的符号，说明_printf函数的实现不在函数内，让编译器自己去找实现，对于标准库中的函数编译时不用加标准库具体在哪，gcc会自己去找
+section .text
+_hello:
+    push ebp
+    mov ebp,esp
+
+    push hello_str
+    call _printf
+
+    add esp,0x08;退栈
+    ; call _printf ;此时若再打印就是乱码
+
+    leave
+    ret
+</code></pre>
+<pre><code class="language-c">//main.c
+#include &lt;stdio.h&gt;
+
+extern void hello();
+
+int main()
+{
+    hello();
+}
+</code></pre>
+<pre><code class="language-Makefile">#Makefile
+EXE = main.exe
+OBJ = main.o hello.o
+
+$(EXE) : $(OBJ)
+	gcc $(OBJ) -m32 -o $(EXE)
+
+main.o : main.c
+	gcc main.c -m32 -c -o main.o
+
+hello.o : hello.asm
+	nasm -f win32 hello.asm -o hello.o
+	
+clean:
+	rm -rf $(OBJ) $(EXE)
+</code></pre>
+<p>上面的汇编语言是nasm格式的86汇编语言<br>
+在ATT汇编中</p>
+<pre><code>可以用
+.globl和.extern表示全局和外部
+</code></pre>
+<p>注意：extern在某些时候加不加都可以，比如当先编译完外部符号的文件，然后再编译使用外部符号的文件时不加extern也可通过编译，但是<strong>非常不推荐</strong>这样做，<strong>如果项目规模较大不加extern就很可能出现链接问题，同时也不便管理</strong>。所以有多个文件需要链接时，使用extern可以减少错误的产生，也方便代码维护和管理。因此推荐的策略是不管可不可以都加上extern。</p>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[8.值类型]]></title>
+        <id>https://xy-gif.github.io/post/8zhi-lei-xing/</id>
+        <link href="https://xy-gif.github.io/post/8zhi-lei-xing/">
+        </link>
+        <updated>2023-04-18T02:08:14.000Z</updated>
+        <content type="html"><![CDATA[<h1 id="8值类型">8.值类型</h1>
+<p>lvalue(左值)，prvalue(纯右值) 和 xvalue(将亡值)三种。加上两种混合类别：glvalue(泛左值)和rvalue(右值)，一共有五种。</p>
+<h2 id="分类标准">分类标准：</h2>
+<ul>
+<li>
+<p><strong>是否拥有身份（identity）：可以确定表达式是否与另一表达式指代同一实体，例如比较它们所标识的对象或函数的（直接或间接获得的）地址；</strong> 也就是说能否通过&amp;获取其地址，例如，int a可以&amp;a获取地址，则a就是有身份的，而常量1无法通过&amp;获取地址，所以1是没有身份的。</p>
+</li>
+<li>
+<p><strong>是否可被移动（moveable）：移动构造函数、移动赋值运算符或实现了移动语义的其他函数重载能够绑定到这个表达式。</strong></p>
+</li>
+</ul>
+<p>移动例子：</p>
+<pre><code class="language-cpp">#include &lt;iostream&gt;
+#include &lt;vector&gt;
+
+int main()
+{
+    std::cout &lt;&lt; &quot;Create and fill v1:\n&quot;;
+    std::vector&lt;int&gt; v1 = {1, 2, 3};
+    for (auto i : v1) {
+        std::cout &lt;&lt; i &lt;&lt; &quot; &quot;;
+    }
+    std::cout &lt;&lt; &quot;\n&quot;;
+
+    // Move v1 to v2
+    std::cout &lt;&lt; &quot;Move v1 to v2:\n&quot;;
+    std::vector&lt;int&gt; v2 = std::move(v1);//v1原本是不可移动的，但是通过std::move函数，转为可以动的右值引用。
+    for (auto i : v2) {
+        std::cout &lt;&lt; i &lt;&lt; &quot; &quot;;
+    }
+    std::cout &lt;&lt; &quot;\n&quot;;
+
+    // Access v1 after move
+    std::cout &lt;&lt; &quot;Access v1 after move:\n&quot;;
+    for (auto i : v1) {
+        std::cout &lt;&lt; i &lt;&lt; &quot; &quot;;
+    }
+    std::cout &lt;&lt; &quot;\n&quot;;
+
+    return 0;
+}
+</code></pre>
+<p>语句<code>std::vector&lt;int&gt; v2 = std::move(v1);</code>作用是把v1中的资源等内容移动到v2中，这句话的执行具体方法如下：</p>
+<pre><code>1. std::move(v1)将v1转化为一个将亡值，也就是一个右值引用
+2. 在“=”号时会调用移动移动构造函数构造v2（若v2之前就定义过了则会调用移动赋值函数），将v1中的资源移入v2
+3. v1中的资源被清空
+</code></pre>
+<p>可以理解为可移动就是能将资源移动到其它的变量中,移动完成后自身就会销毁</p>
+<h2 id="c11中对于这五种类别定义">C++11中对于这五种类别定义</h2>
+<ul>
+<li>lvalue是指：拥有身份且不可被移动的表达式。</li>
+<li>xvalue是指：拥有身份且可被移动的表达式。</li>
+<li>prvalue是指：不拥有身份且可被移动的表达式。</li>
+<li>glvalue是指：拥有身份的表达式，lvalue和xvalue都是glvalue。</li>
+<li>rvalue是指：可被移动的表达式。prvalue和xvalue都是rvalue。</li>
+</ul>
+<p>如下表：</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>拥有身份(glvalue)</th>
+<th>不拥有身份</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>可移动(rvalue)</td>
+<td>xvalue</td>
+<td>prvalue</td>
+</tr>
+<tr>
+<td>不可移动</td>
+<td>lvalue</td>
+<td>不存在</td>
+</tr>
+</tbody>
+</table>
+<h3 id="常见lvalue">常见lvalue</h3>
+<pre><code class="language-cpp">&quot;hello world&quot; // lvalue
+int a{}; // lvalue
+++a; // lvalue
+ 
+int&amp; get() {static int a;return a;}//返回的值是lvalue
+get(); // lvalue，函数名
+ 
+int b[4]{}; // lvalue
+b[2]; // lvalue
+ 
+int foo();
+int &amp;&amp;a { foo() }; // lvalue
+ 
+struct foo {int a;};
+foo f; // lvalue
+f.a; // lvalue
+ 
+int &amp;&amp;c{ 55 }; // lvalue，这是个右值引用
+int &amp;d{ a }; // lvalue
+</code></pre>
+<h3 id="常见prvalue">常见prvalue</h3>
+<pre><code class="language-cpp">42 // prvalue
+true // prvalue
+ 
+foo();// prvalue,函数返回值
+ 
+int a{}, b{}; // both lvalues
+a + b; // prvalue
+&amp;a; // prvalue
+ 
+a++ // prvalue
+b-- // prvalue
+a &amp;&amp; b  // prvalue
+a &lt; b // prvalue
+ 
+double {}; // prvalue
+std::vector&lt;X&gt; {}; // prvalue
+</code></pre>
+<p><strong>++i和i++：++i是左值，因为++i执行的过程是先把i加一，然后返回i变量本身。而i++是右值，因为i++先把i复制到一个临时变量中，然后把i加一，最后返回这个临时变量，因为变量是临时的所以是右值。所以++i可以赋值、取地址，但i++不行。</strong></p>
+<h3 id="常见xvalue">常见xvalue</h3>
+<p>1）返回右值引用的函数的调用表达式<br>
+2）转换为右值引用的转换函数的调用表达式</p>
+<p><em>也可以说：<br>
+表达式的类型是右值引用类型。例如，int&amp;&amp; 类型的变量或函数参数。<br>
+表达式需要进行对象的移动或转移所有权。例如，调用一个移动构造函数或移动赋值运算符的操作，或使用 std::move 转换之后的表达式。</em></p>
+<pre><code class="language-cpp">bool b {true}; // lvalue
+std::move(b); // xvalue
+static_cast&lt;bool&amp;&amp;&gt;(b); // xvalue
+ 
+int&amp;&amp; foo();
+foo(); // xvalue
+ 
+struct foo {int a;};
+std::move(f).a; // xvalue
+foo{}.a; // xvalue
+ 
+int a[4]{};
+std::move(a); // xvalue
+std::move(a)[2]; // xvalue
+ 
+using arr = int[2];
+arr{}[0]; // xvalue
+</code></pre>
+<h2 id="引用与移动语义">引用与移动语义</h2>
+<h3 id="左值引用">左值引用</h3>
+<p>就是指向左值的引用<br>
+例如：</p>
+<pre><code class="language-cpp">int a = 10;
+int &amp;b = a;
+</code></pre>
+<p>b是a的一个左值引用，a是一个左值，所以b绑定的是左值所以叫左值引用。<br>
+左值引用经常在传参的时候使用，尤其是当对象成员多时，这样可以减少对象成员压栈的次数，提高速度。</p>
+<h3 id="常左值引用">常左值引用</h3>
+<p>C++中，如下代码是错误的</p>
+<pre><code class="language-cpp">int &amp;a = 10;
+</code></pre>
+<p>很明显10是一个右值，而右值是没有地址的，所以a就不知道绑定到哪个地址上，所以左值引用无法直接与右值绑定<br>
+但是可以通过const关键字绑定右值，即</p>
+<pre><code class="language-cpp">const int &amp;a = 10;
+</code></pre>
+<p>这样就是正确的，实际上，对于 const int &amp;a = 10 这个语句而言，编译器会将 10 转换成一个临时变量，然后将 a 绑定到这个临时变量上。所以当用作参数时const int &amp;a既可以接收左值，也可以接收右值</p>
+<h3 id="右值引用">右值引用</h3>
+<p>就是对右值进行引用，右值引用可用于为临时对象延长生存期（注意，常左值引用亦能延长临时对象生存期，但不能通过常左值引用修改他们）</p>
+<pre><code class="language-cpp">#include &lt;iostream&gt;
+#include &lt;string&gt;
+ 
+int main()
+{
+    std::string s1 = &quot;Test&quot;;
+//  std::string&amp;&amp; r1 = s1;           // 错误：不能绑定到左值
+ 
+    const std::string&amp; r2 = s1 + s1; // okay ：到 const 的左值引用延长生存期
+//  r2 += &quot;Test&quot;;                    // 错误：不能通过到 const 的引用修改
+ 
+    std::string&amp;&amp; r3 = s1 + s1;      // okay ：右值引用延长生存期
+    r3 += &quot;Test&quot;;                    // okay ：能通过到非 const 的引用修改
+    std::cout &lt;&lt; r3 &lt;&lt; '\n';
+}
+</code></pre>
+<p>使用函数<code>std::move</code>可以把<code>lvalue</code>转化为<code>右值引用</code></p>
+<pre><code class="language-cpp">#include &lt;iostream&gt;
+#include &lt;utility&gt;
+ 
+void f(int&amp; x)
+{
+    std::cout &lt;&lt; &quot;lvalue reference overload f(&quot; &lt;&lt; x &lt;&lt; &quot;)\n&quot;;
+}
+ 
+void f(const int&amp; x)
+{
+    std::cout &lt;&lt; &quot;lvalue reference to const overload f(&quot; &lt;&lt; x &lt;&lt; &quot;)\n&quot;;
+}
+ 
+void f(int&amp;&amp; x)
+{
+    std::cout &lt;&lt; &quot;rvalue reference overload f(&quot; &lt;&lt; x &lt;&lt; &quot;)\n&quot;;
+}
+ 
+int main()
+{
+    int i = 1;
+    const int ci = 2;
+    f(i);  // 调用 f(int&amp;)
+    f(ci); // 调用 f(const int&amp;)
+    f(3);  // 调用 f(int&amp;&amp;)
+           // 若不提供 f(int&amp;&amp;) 重载则会调用 f(const int&amp;)
+    f(std::move(i)); // 调用 f(int&amp;&amp;)
+ 
+    // 右值引用变量在用于表达式时是左值
+    int&amp;&amp; x = 1;
+    f(x);            // calls f(int&amp; x)
+    f(std::move(x)); // calls f(int&amp;&amp; x)
+}
+</code></pre>
+<p>右值引用既可以绑定在<code>xvalue</code>上也可以绑定在另一个<code>右值引用</code>上</p>
+<h3 id="移动语义">移动语义</h3>
+<p>通过右值引用我们可以实现移动构造函数<br>
+例如下面的例子：</p>
+<pre><code class="language-cpp">#include &lt;iostream&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;string.h&gt;
+
+using namespace std;
+
+class Test {
+private:
+    int* ptr;
+    int size;
+public:
+    Test(int n=0) {
+        size = n;
+        ptr = new int[n];
+        cout &lt;&lt; &quot;调用了普通构造函数&quot; &lt;&lt; endl;
+    }
+    
+    Test(const Test&amp; other) {
+        size = other.size;
+        ptr = new int[size];
+        memcpy(ptr,other.ptr,other.size);
+        cout &lt;&lt; &quot;调用了复制构造函数&quot; &lt;&lt; endl;
+    }
+
+    Test(Test&amp;&amp; other) noexcept {
+        ptr = other.ptr;
+        size = other.size;
+        other.ptr = nullptr;
+        other.size = 0;
+        cout &lt;&lt; &quot;调用了移动构造函数&quot; &lt;&lt; endl;
+    }
+
+    ~Test() {
+        delete[] ptr;
+    }
+};
+
+int main() {
+    Test t1(10);  // 调用普通构造函数
+    Test t2(t1);  // 调用复制构造函数
+    Test t3(move(t1));  // 调用移动构造函数
+
+    return 0;
+}
+</code></pre>
+<p>上例中，可以对比拷贝构造函数和移动构造函数<br>
+拷贝构造函数进行深拷贝，重新向内存申请啦空间，<br>
+而移动构造函数只是让对象指向右值对象，并释放了右值对象。<br>
+明显移动构造函数开销更小，这种操作在对象是返回值也就是xvalue时十分有用<br>
+可以避免大量内存申请的开销，防止内存碎片过多。</p>
+<p><em>注：当返回值返回一个对象时，一般会调用拷贝函数或者拷贝构造函数，但有时编译器会进行返回值优化RVO(Return Value Optimization)，这样实验是就观察不到是否调用这个函数了，在g++中可以通过<code>-fno-elide-constructors</code>选项进制返回值优化</em></p>
+<h2 id="本文参考文章">本文参考文章</h2>
+<ul>
+<li><a href="https://mp.weixin.qq.com/s/XghlSYn9aUgYN6oiBAO2jw">《C++ 中的值类别》-微信-CPP开发者</a></li>
+</ul>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[9.运算符重载与友元]]></title>
+        <id>https://xy-gif.github.io/post/9yun-suan-fu-chong-zai-yu-you-yuan/</id>
+        <link href="https://xy-gif.github.io/post/9yun-suan-fu-chong-zai-yu-you-yuan/">
+        </link>
+        <updated>2023-04-18T01:09:41.000Z</updated>
+        <content type="html"><![CDATA[<h1 id="9运算符重载与友元">9.运算符重载与友元</h1>
+<h2 id="运算符重载">运算符重载</h2>
+<p>在C++的类中可以重载运算符，重载方式如下</p>
+<pre><code class="language-cpp">返回值类型 operator运算符(参数列表)
+{
+    ......
+}
+</code></pre>
+<p>例如：</p>
+<pre><code class="language-cpp">myStr&amp; operator=(const myStr&amp; mys)
+{
+    if(this-&gt;len&lt;mys.len)
+    {
+        delete[] this-&gt;str;
+        this-&gt;str = new char[mys.len];
+    }
+    this-&gt;len = mys.len;
+    memcpy(this-&gt;str,mys.str,mys.len);
+}
+</code></pre>
+<p>我们可以重载如下运算符：</p>
+<table>
+<thead>
+<tr>
+<th>+</th>
+<th>-</th>
+<th>*</th>
+<th>/</th>
+<th>%</th>
+<th>^</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>&amp;</td>
+<td>|</td>
+<td>~=</td>
+<td>!</td>
+<td>=</td>
+<td>&lt;</td>
+</tr>
+<tr>
+<td>&gt;</td>
+<td>+=</td>
+<td>-=</td>
+<td>*=</td>
+<td>/=</td>
+<td>%=</td>
+</tr>
+<tr>
+<td>^=</td>
+<td>&amp;=</td>
+<td>|=</td>
+<td>&lt;&lt;</td>
+<td>&gt;&gt;</td>
+<td>&gt;&gt;=</td>
+</tr>
+<tr>
+<td>||</td>
+<td>++</td>
+<td>--</td>
+<td>,</td>
+<td>-&gt;*</td>
+<td>-&gt;</td>
+</tr>
+<tr>
+<td>()</td>
+<td>[]</td>
+<td>new</td>
+<td>delete</td>
+<td>new[]</td>
+<td>delete[]</td>
+</tr>
+</tbody>
+</table>
+<p>++有前置和后置的区别，见下例：</p>
+<pre><code class="language-cpp">class MyClass {
+public:
+    // 前置++运算符重载
+    MyClass&amp; operator++() {
+        ++value;
+        return *this;
+    }
+
+    // 后置++运算符重载
+    MyClass operator++(int) {
+        MyClass temp(*this);
+        ++value;
+        return temp;
+    }
+
+private:
+    int value;
+};
+</code></pre>
+<p>很明显前置++返回的是本对象的引用是一个左值，<br>
+而后置++返回的是临时对象，是一个右值。</p>
+<h2 id="友元">友元</h2>
+<h3 id="友元函数">友元函数</h3>
+<p>友元函数和普通函数相比拥有更高的的访问权限，<br>
+友元函数可以访问类中的私有和保护成员，我们也可以<br>
+用这种方法重载运算符。<br>
+声明友元函数时，在函数名前加上friend即可。<br>
+在实现友元函数时不要在前面加上域运算符</p>
+<pre><code class="language-cpp">#include &lt;iostream&gt;
+
+class point
+{
+private:
+    int x,y;
+public:
+    point(int _x=0,int _y=0):x(_x),y(_y){};//当自定义一个构造函数后，就不会自动生成拷贝、和移动构造函数了
+    point(const point&amp; p):x(p.x),y(p.y){};
+    point(point&amp;&amp; p):x(p.x),y(p.y){p.x=0;p.y=0;};
+    ~point(){};
+    friend point operator+(const point &amp;p1,const point &amp;p2);
+    point&amp; operator=(point&amp;&amp; p);
+    point&amp; operator=(const point&amp; p);
+    void display();
+};
+
+point operator+(const point &amp;p1,const point &amp;p2)
+{
+    return point(p1.x+p2.x,p1.y+p2.y);
+}
+
+point&amp; point::operator=(point&amp;&amp; p)//移动赋值函数
+{
+        this-&gt;x = p.x;
+        this-&gt;y = p.y;
+        p.x = 0;
+        p.y = 0;
+        return *this;
+}
+
+point&amp; point::operator=(const point&amp; p)//拷贝赋值
+{
+        this-&gt;x = p.x;
+        this-&gt;y = p.y;
+        return *this;
+}
+
+void point::display()
+{
+    std::cout&lt;&lt;&quot;(&quot;&lt;&lt;x&lt;&lt;&quot;,&quot;&lt;&lt;y&lt;&lt;&quot;)&quot;&lt;&lt;std::endl;
+}
+
+int main()
+{
+    point p = point(1,2)+point(2,3);
+    p.display();
+    return 0;
+}
+</code></pre>
+<h3 id="友元类">友元类</h3>
+<p>与友元函数类似，可以访问另一个类中的私有和保护成员。<br>
+例如，类A中有友元类B，则B可以访问A中的私有、保护成员</p>
+<pre><code class="language-cpp">class A
+{
+public:
+    friend class B;
+    ...
+private:
+    ...
+}
+
+class B
+{
+    ....
+}
+</code></pre>
+<p><code>friend class B;</code>这句话放在<code>private</code>、<code>public</code>或者<code>protect</code>都可以</p>
+<h3 id="友元成员函数">友元成员函数</h3>
+<p>让某个类的成员成员函数成为另一个类的友元</p>
+<pre><code class="language-cpp">class B;//一般A中会有B作为组成部分
+
+class A
+{
+    ...
+}
+
+class B
+{
+    ...
+    friend void A::fun();
+    ...
+}
+</code></pre>
+<p>上述顺序不可以修改，<br>
+因为编译器要先看到<code>A::fun()</code>在A中声明后才行</p>
+<p>友元破坏了类的封装性，提高了系统的耦合度，<br>
+在一些大型项目中不建议使用友元，否则项目<br>
+耦合度会变的很高，难以维护。<br>
+对于一个人就可以维护的小型的项目可以自主<br>
+选择是否使用友元。</p>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[10.placement new机制]]></title>
+        <id>https://xy-gif.github.io/post/placement-new-ji-zhi/</id>
+        <link href="https://xy-gif.github.io/post/placement-new-ji-zhi/">
+        </link>
+        <updated>2023-04-18T00:10:40.000Z</updated>
+        <content type="html"><![CDATA[<h1 id="10-placement-new机制">10. placement new机制</h1>
+<h2 id="栈上分配">栈上分配</h2>
+<p>C++中的new有指定new的机制(placement new机制)<br>
+可以指定new的位置，可以通过 (addr)new(Class)的形式在addr的位置创建一个Class对象</p>
+<p>addr的位置可以是栈或堆上</p>
+<p>栈上指定new分配：</p>
+<pre><code class="language-cpp">#include &lt;iostream&gt;
+using namespace std;
+ 
+class A
+{
+public:
+	A()
+	{
+		cout &lt;&lt; &quot;A's constructor&quot; &lt;&lt; endl;
+	}
+ 
+ 
+	~A()
+	{
+		cout &lt;&lt; &quot;A's destructor&quot; &lt;&lt; endl;
+	}
+	
+	void show()
+	{
+		cout &lt;&lt; &quot;num:&quot; &lt;&lt; num &lt;&lt; endl;
+	}
+	
+private:
+	int num;
+};
+ 
+int main()
+{
+	char mem[100];
+	mem[0] = 'A';
+	mem[1] = '\0';
+	mem[2] = '\0';
+	mem[3] = '\0';
+	cout &lt;&lt; (void*)mem &lt;&lt; endl;
+	A* p = new (mem)A;
+	cout &lt;&lt; p &lt;&lt; endl;
+	p-&gt;show();
+	p-&gt;~A();
+	getchar();
+}
+</code></pre>
+<p>可以看出指定new的本质就是返回指定位置的地址，并在相应位置创建对象，但其中不涉及内存的申请。当不需要申请的对象时，则要显示调用析构函数，来清空对象。同时同一个内存不能同时new两次分给不同对象，否则会产生覆盖现象。<br>
+在栈上指定的new不用delete回收，因为栈上的内存在函数结束时自动回收</p>
+<p>1）用定位放置new操作，既可以在栈(stack)上生成对象，也可以在堆（heap）上生成对象。如本例就是在栈上生成一个对象。</p>
+<p>（2）使用语句A* p=new (mem) A;定位生成对象时，指针p和数组名mem指向同一片存储区。所以，与其说定位放置new操作是申请空间，还不如说是利用已经请好的空间，真正的申请空间的工作是在此之前完成的。</p>
+<p>（3）使用语句A *p=new (mem) A;定位生成对象时，会自动调用类A的构造函数，但是由于对象的空间不会自动释放（对象实际上是借用别人的空间），所以必须显示的调用类的析构函数，如本例中的p-&gt;~A()。</p>
+<p>（4）如果有这样一个场景，我们需要大量的申请一块类似的内存空间，然后又释放掉，比如在在一个server中对于客户端的请求，每个客户端的每一次上行数据我们都需要为此申请一块内存，当我们处理完请求给客户端下行回复时释放掉该内存，表面上看者符合c++的内存管理要求，没有什么错误，但是仔细想想很不合理，为什么我们每个请求都要重新申请一块内存呢，要知道每一次内从的申请，系统都要在内存中找到一块合适大小的连续的内存空间，这个过程是很慢的（相对而言)，极端情况下，如果当前系统中有大量的内存碎片，并且我们申请的空间很大，甚至有可能失败。为什么我们不能共用一块我们事先准备好的内存呢？可以的，我们可以使用placement new来构造对象，那么就会在我们指定的内存空间中构造对象。</p>
+<h2 id="堆上分配">堆上分配</h2>
+<pre><code class="language-cpp">#include &lt;iostream&gt;
+using namespace std;
+ 
+class A
+{
+public:
+	A()
+	{
+		cout &lt;&lt; &quot;A's constructor&quot; &lt;&lt; endl;
+	}
+ 
+ 
+	~A()
+	{
+		cout &lt;&lt; &quot;A's destructor&quot; &lt;&lt; endl;
+	}
+	
+	void show()
+	{
+		cout &lt;&lt; &quot;num:&quot; &lt;&lt; num &lt;&lt; endl;
+	}
+	
+private:
+	int num;
+};
+ 
+int main()
+{
+	char *mem = new char[100];
+	mem[0] = 'A';
+	mem[1] = '\0';
+	mem[2] = '\0';
+	mem[3] = '\0';
+	cout &lt;&lt; (void*)mem &lt;&lt; endl;
+	A* p = new (mem)A;
+	cout &lt;&lt; p &lt;&lt; endl;
+	p-&gt;show();
+	p-&gt;~A();
+	delete[] mem;
+	getchar();
+}
+</code></pre>
+<p>堆上分配的对象不要时候用delete obj 来释放内存，销毁对象时还是显示调用析构函数，<br>
+当缓冲区不用时再调用delete[] 来释放缓冲区。</p>
+<h2 id="本文参考文章">本文参考文章</h2>
+<ul>
+<li><a href="https://zhuanlan.zhihu.com/p/228001107">《placement new机制》-知乎-AlexNoBug</a></li>
+</ul>
+]]></content>
+    </entry>
+</feed>

@@ -1,0 +1,316 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>6. C++-Java Lambda表达式 | 笔记</title>
+<link rel="shortcut icon" href="https://xy-gif.github.io/favicon.ico?v=1682314727285">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://xy-gif.github.io/styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="6. C++-Java Lambda表达式 | 笔记 - Atom Feed" href="https://xy-gif.github.io/atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="6. C++-Java Lambda表达式
+C++ Lambda表达式
+基本
+格式：
+[capture list](paramenters) mutable throw()-&gt;return-type{functionbody}
+
+[c..." />
+    <meta name="keywords" content="C++" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.5.1/build/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://xy-gif.github.io">
+  <img class="avatar" src="https://xy-gif.github.io/images/avatar.png?v=1682314727285" alt="">
+  </a>
+  <h1 class="site-title">
+    笔记
+  </h1>
+  <p class="site-description">
+    
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              6. C++-Java Lambda表达式
+            </h2>
+            <div class="post-info">
+              <span>
+                2023-04-18
+              </span>
+              <span>
+                5 min read
+              </span>
+              
+                <a href="https://xy-gif.github.io/tag/CYVB1qPMl/" class="post-tag">
+                  # C++
+                </a>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content" v-pre>
+                <h1 id="6-c-java-lambda表达式">6. C++-Java Lambda表达式</h1>
+<h2 id="c-lambda表达式">C++ Lambda表达式</h2>
+<h3 id="基本">基本</h3>
+<p>格式：<br>
+<code>[capture list](paramenters) mutable throw()-&gt;return-type{functionbody}</code></p>
+<ol>
+<li>[capture list]是捕获列表，用于捕获上下文中的变量以供Lambda表达式使用</li>
+<li>(paramenters) 是参数列表，用于定义传入的参数</li>
+<li>mutable 可变规格。mutable修饰符， 默认情况下Lambda函数总是一个const函数，mutable可以取消其常量性。在使用该修饰符时，参数列表不可省略（即使参数为空）。</li>
+<li>throw() 异常说明。用于Lamdba表达式内部函数抛出异常。</li>
+<li>return-type：追踪返回类型形式声明函数的返回类型。我们可以在不需要返回值的时候也可以连同符号”-&gt;”一起省略。此外，在返回类型明确的情况下，也可以省略该部分，让编译器对返回类型进行推导。</li>
+<li>{functionbody}：函数体，里面写函数的具体实现</li>
+</ol>
+<p>例1：把无捕获的lambda表达式赋给函数指针，然后再调用。</p>
+<pre><code class="language-cpp">#include&lt;iostream&gt;
+
+int main()
+{
+
+    int (*add)(int,int) = [](int a,int b)-&gt;int{return a+b;};
+//    int (*add)(int,int) = [](int a,int b){return a+b;};当返回值明确时可以不写
+    std::cout&lt;&lt;add(10,20);
+}
+</code></pre>
+<p>例2：在回调函数中传入lambda表达式作为函数指针参数。</p>
+<pre><code class="language-cpp">#include&lt;iostream&gt;
+
+int fun(int (*op)(int,int),int a,int b)
+{
+    return op(a,b);
+}
+
+int main()
+{
+    int c = fun([](int a,int b)-&gt;int{return a+b;},20,30);
+    std::cout&lt;&lt;c;
+}
+</code></pre>
+<p>注意：当捕获列表中有捕获的值时，就不可以定义函数指针指向lambda表达式了<br>
+比如，下面的写法就是错的：</p>
+<pre><code class="language-cpp">    int a;
+    void (*fun)() = [&amp;a]()-&gt;void{a=10; return;};
+</code></pre>
+<p>此时可以用auto类型定义变量指向lambda表达式，上述代码就可以改为</p>
+<pre><code class="language-cpp">    int a;
+    auto fun = [&amp;a]()-&gt;void{a=10; return;};
+</code></pre>
+<h3 id="捕获列表">捕获列表</h3>
+<ul>
+<li><code>[]</code>表示不捕获任何变量</li>
+<li><code>[var]</code>表示值传递方式捕获变量var</li>
+<li><code>[=]</code>表示值传递方式捕获所有父作用域的变量（包括this）</li>
+<li><code>[&amp;var]</code>表示引用传递捕捉变量var</li>
+<li><code>[&amp;]</code>表示引用传递方式捕捉所有父作用域的变量（包括this）</li>
+<li><code>[this]</code>表示值传递方式捕捉当前的this指针</li>
+<li><code>[=, &amp;]</code> 拷贝与引用混合
+<ul>
+<li><code>[=, &amp;a, &amp;b]</code>表示以引用传递的方式捕捉变量a和b，以值传递方式捕捉其它所有变量。</li>
+</ul>
+</li>
+<li><code>[&amp;, a, this]</code>表示以值传递的方式捕捉变量a和this，引用传递方式捕捉其它所有变量。</li>
+<li><code>[=,a]</code>这里已经以值传递方式捕捉了所有变量，但是重复捕捉a了，会报错的；</li>
+<li><code>[&amp;,&amp;this]</code>这里&amp;已经以引用传递方式捕捉了所有变量，再捕捉this也是一种重复。</li>
+</ul>
+<h3 id="mutable修饰符">mutable修饰符</h3>
+<p><code>mutable</code>修饰符， 默认情况下Lambda函数总是一个const函数，<code>mutable</code>可以取消其常量性。在使用该修饰符时，参数列表不可省略（即使参数为空）。</p>
+<pre><code class="language-cpp">#include &lt;iostream&gt;
+using namespace std;
+
+int main()
+{
+   int m = 0;
+   int n = 0;
+   [&amp;, n] (int a) mutable { m = ++n + a; }(4);
+   cout &lt;&lt; m &lt;&lt; endl &lt;&lt; n &lt;&lt; endl;
+}
+</code></pre>
+<h3 id="异常">异常</h3>
+<p>在MSDN的异常规范中，明确指出异常规范是在 C++11 中弃用的 C++ 语言功能。因此不建议使用。</p>
+<h2 id="java-lambda表达式">Java Lambda表达式</h2>
+<p>Java的Lambda表达式必须依赖于函数式接口。<br>
+函数式接口就是只有一个方法的接口，在接口前面最好加上@FunctionalInterface批注。<br>
+例如，定义一个函数式接口Op，表示操作：</p>
+<pre><code class="language-java">package lambda.test;
+
+@FunctionalInterface
+public interface Op {
+	int op(int a,int b);
+}
+</code></pre>
+<p>注意Op中只有一个方法op没有其它的方法了。当存在这种只有一个方法的接口我们称之为函数式接口，这种接口可以通过类来实现，也可以通过lambda表达式实现，例如下面的main函数中就直接实现了函数式接口。</p>
+<pre><code class="language-java">package lambda.test;
+import lambda.test.Op;
+
+
+public class TestMain {
+
+	public static void main(String[] args) {
+		Op operator = (int a,int b)-&gt;{return a+b;};
+		System.out.println(operator.op(10, 20));
+	}
+
+}
+</code></pre>
+<p>Java的lambda表达式写法与C++类似，但是也有所不同，<br>
+Java的没有返回值类型和捕获列表。<br>
+其中没有返回值类型很好理解，因为这是对接口中函数的实现，所以接口的返回值类型就是lambda表达式的返回值类型。</p>
+<p>当然上述的代码也可以这样写，这样同样可以重写</p>
+<pre><code class="language-java">package lambda.test;
+import lambda.test.Op;
+
+public class TestMain {
+	public static void main(String[] args) {
+		Op operator = new Op() {
+			@Override
+			public int op(int a,int b)
+			{
+				return a+b;
+			};
+		};
+		
+		System.out.println(operator.op(10, 20));
+	}
+
+}
+</code></pre>
+<p>总结：Java Lambda表达式写法：(参数列表)-&gt;{函数体}</p>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li><a href="#6-c-java-lambda%E8%A1%A8%E8%BE%BE%E5%BC%8F">6. C++-Java Lambda表达式</a>
+<ul>
+<li><a href="#c-lambda%E8%A1%A8%E8%BE%BE%E5%BC%8F">C++ Lambda表达式</a>
+<ul>
+<li><a href="#%E5%9F%BA%E6%9C%AC">基本</a></li>
+<li><a href="#%E6%8D%95%E8%8E%B7%E5%88%97%E8%A1%A8">捕获列表</a></li>
+<li><a href="#mutable%E4%BF%AE%E9%A5%B0%E7%AC%A6">mutable修饰符</a></li>
+<li><a href="#%E5%BC%82%E5%B8%B8">异常</a></li>
+</ul>
+</li>
+<li><a href="#java-lambda%E8%A1%A8%E8%BE%BE%E5%BC%8F">Java Lambda表达式</a></li>
+</ul>
+</li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://xy-gif.github.io/post/7bian-liang-lei-xing-he-lian-jie-xing/">
+              <h3 class="post-title">
+                7.变量类型和连接性
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  
+  <a class="rss" href="https://xy-gif.github.io/atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

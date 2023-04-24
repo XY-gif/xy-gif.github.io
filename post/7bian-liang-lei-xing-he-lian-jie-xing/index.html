@@ -1,0 +1,414 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>7.变量类型和连接性 | 笔记</title>
+<link rel="shortcut icon" href="https://xy-gif.github.io/favicon.ico?v=1682314727285">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://xy-gif.github.io/styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="7.变量类型和连接性 | 笔记 - Atom Feed" href="https://xy-gif.github.io/atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="7.变量类型和连接性
+变量类型
+变量分类及特点：
+
+
+
+变量类型
+变量位置
+
+
+
+
+局部变量（自动变量）
+当前函数栈中，在ebp~esp之间，一般用ebp-n访问
+
+
+寄存器变量
+存在某个寄存器中，但在C++17中弃用了会报警告，不推荐使用..." />
+    <meta name="keywords" content="C++" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.5.1/build/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://xy-gif.github.io">
+  <img class="avatar" src="https://xy-gif.github.io/images/avatar.png?v=1682314727285" alt="">
+  </a>
+  <h1 class="site-title">
+    笔记
+  </h1>
+  <p class="site-description">
+    
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              7.变量类型和连接性
+            </h2>
+            <div class="post-info">
+              <span>
+                2023-04-18
+              </span>
+              <span>
+                6 min read
+              </span>
+              
+                <a href="https://xy-gif.github.io/tag/CYVB1qPMl/" class="post-tag">
+                  # C++
+                </a>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content" v-pre>
+                <h1 id="7变量类型和连接性">7.变量类型和连接性</h1>
+<h2 id="变量类型">变量类型</h2>
+<p><strong>变量分类及特点：</strong></p>
+<table>
+<thead>
+<tr>
+<th>变量类型</th>
+<th>变量位置</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>局部变量（自动变量）</td>
+<td>当前函数栈中，在ebp~esp之间，一般用ebp-n访问</td>
+</tr>
+<tr>
+<td>寄存器变量</td>
+<td>存在某个寄存器中，但在C++17中弃用了会报警告，不推荐使用</td>
+</tr>
+<tr>
+<td>静态变量</td>
+<td>存在于.data段中</td>
+</tr>
+<tr>
+<td>全局变量</td>
+<td>存在于.data段中</td>
+</tr>
+</tbody>
+</table>
+<h2 id="变量连接性及其原理">变量连接性及其原理</h2>
+<h3 id="连接性">连接性</h3>
+<table>
+<thead>
+<tr>
+<th>变量类型</th>
+<th>作用域和生命周期</th>
+<th>连接性</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>局部变量（自动变量）</td>
+<td>作用于当前代码块，函数结束时就消失</td>
+<td>无</td>
+</tr>
+<tr>
+<td>寄存器变量（只能用于局部）</td>
+<td>作用于当前代码块，函数结束时就消失</td>
+<td>无</td>
+</tr>
+<tr>
+<td>静态局部变量</td>
+<td>作用于当前代码块，函数结束时也不消失，整个程序结束才会消失</td>
+<td>无</td>
+</tr>
+<tr>
+<td>静态全局变量</td>
+<td>作用于当前文件，整个程序结束才会消失</td>
+<td>内部</td>
+</tr>
+<tr>
+<td>一般全局变量</td>
+<td>作用于所有引入它文件，整个程序结束才会消失</td>
+<td>外部</td>
+</tr>
+</tbody>
+</table>
+<h3 id="原理以x86-g-32bit为例说明">原理[以(x86)-(g++)-(32bit)为例说明]</h3>
+<h4 id="局部变量和寄存器变量">局部变量和寄存器变量</h4>
+<p>局部变量存到栈中，以ebp为栈基，以esp为栈的游标(就是栈活动的那一端)，寄存器变量直接到寄存器中。<br>
+<strong>在退出函数时函数的栈会被撤销</strong>。<br>
+<strong>而寄存器的内容会被恢复变成进入函数之前的样子</strong>，<br>
+例如进入函数之前ebx=10，进入函数时使用ebx作变量，退出函数时还要把ebx恢复成10。<br>
+所以局部变量和寄存器变量在函数结束时就消失了。<br>
+也就是说它们的生命周期不长，所以不能有连接性。<br>
+要不然就可能出现连接这个变量的函数还没用它，它就消亡了的情况。<br>
+上面两个比较易于理解，不再赘述</p>
+<h4 id="静态和全局">静态和全局</h4>
+<p>下面着重描述如下三个链接性的原理<br>
+静态局部变量、静态全局变量、一般全局变量<br>
+现有如下代码<code>s1.cpp</code></p>
+<pre><code class="language-cpp">static int x=10;
+int y=20;
+int main()
+{
+	static int z=30;
+	return 0;
+}
+</code></pre>
+<p>其中<br>
+x是静态全局变量<br>
+y是一般全局变量<br>
+z是静态局部变量<br>
+用如下指令编译成汇编语言<br>
+<code>g++ s1.cpp -S -m32 -O0 -o s1.s</code><br>
+<code>s1.s</code>如下</p>
+<pre><code class="language-asm">	.file	&quot;s1.cpp&quot;
+	.data
+	.align 4
+__ZL1x:
+	.long	10
+	.globl	_y
+	.align 4
+_y:
+	.long	20
+	.def	___main;	.scl	2;	.type	32;	.endef
+	.text
+	.globl	_main
+	.def	_main;	.scl	2;	.type	32;	.endef
+_main:
+	pushl	%ebp
+	movl	%esp, %ebp
+	andl	$-16, %esp
+	call	___main
+	movl	$0, %eax
+	leave
+	ret
+	.data
+	.align 4
+__ZZ4mainE1z:
+	.long	30
+	.ident	&quot;GCC: (tdm64-1) 4.9.2&quot;
+</code></pre>
+<p>简单分析可以得出x、y、z对应的汇编语句如下</p>
+<pre><code>static int x=10;
+对应
+	.data
+	.align 4
+__ZL1x:
+	.long	10
+
+
+int y=20;
+对应
+	.globl	_y   ;注意这也是在.data段中，标志就是x上面的那个.data
+	.align 4
+_y:
+	.long	20
+
+
+{
+	static int z=30;
+}
+	.data
+	.align 4
+__ZZ4mainE1z:
+	.long	30
+</code></pre>
+<p>明显可以看出x、y、z都在数据段中，所以生命周期是直到程序结束才消失<br>
+且<strong>y被.globl修饰过所以可以外部文件可以看到</strong><br>
+<strong>而x和z没有被.globl修饰过所以外部文件看不到</strong><br>
+同时在z的汇编变量__ZZ4mainE1z上有main修饰表示这是main中的一个变量，<br>
+当编译器在编译时发现其它函数使用了z就会报错导致编译不通过。</p>
+<h2 id="补充汇编语言中的globalglobl和extern">补充汇编语言中的global(globl)和extern：</h2>
+<p>汇编语言中的global表示让所有文件都看得到某个符号<br>
+例如上述例子中有<code>.globl	_main</code>表示所有程序都能看到main函数，所以main函数只能有一个。<br>
+而当我们想使用一些外部文件的函数或者是全局变量时，我们就可以使用<code>extern</code>表示这个符号来源于外部文件，extern只能修饰外部global修饰过的符号，否则没用。</p>
+<p>例如有如下工程</p>
+<pre><code class="language-asm">;hello.s
+section .data
+    hello_str db &quot;hello&quot;,0x0a,0
+
+global _hello    ;表示_hello是个全局的符号，这样其它文件才能看到_hello函数才能调用它，若没有加global则外部文件看不到，外部文件就算用extern也看不到。
+extern _printf   ;表示_printf是个外部的符号，说明_printf函数的实现不在函数内，让编译器自己去找实现，对于标准库中的函数编译时不用加标准库具体在哪，gcc会自己去找
+section .text
+_hello:
+    push ebp
+    mov ebp,esp
+
+    push hello_str
+    call _printf
+
+    add esp,0x08;退栈
+    ; call _printf ;此时若再打印就是乱码
+
+    leave
+    ret
+</code></pre>
+<pre><code class="language-c">//main.c
+#include &lt;stdio.h&gt;
+
+extern void hello();
+
+int main()
+{
+    hello();
+}
+</code></pre>
+<pre><code class="language-Makefile">#Makefile
+EXE = main.exe
+OBJ = main.o hello.o
+
+$(EXE) : $(OBJ)
+	gcc $(OBJ) -m32 -o $(EXE)
+
+main.o : main.c
+	gcc main.c -m32 -c -o main.o
+
+hello.o : hello.asm
+	nasm -f win32 hello.asm -o hello.o
+	
+clean:
+	rm -rf $(OBJ) $(EXE)
+</code></pre>
+<p>上面的汇编语言是nasm格式的86汇编语言<br>
+在ATT汇编中</p>
+<pre><code>可以用
+.globl和.extern表示全局和外部
+</code></pre>
+<p>注意：extern在某些时候加不加都可以，比如当先编译完外部符号的文件，然后再编译使用外部符号的文件时不加extern也可通过编译，但是<strong>非常不推荐</strong>这样做，<strong>如果项目规模较大不加extern就很可能出现链接问题，同时也不便管理</strong>。所以有多个文件需要链接时，使用extern可以减少错误的产生，也方便代码维护和管理。因此推荐的策略是不管可不可以都加上extern。</p>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li><a href="#7%E5%8F%98%E9%87%8F%E7%B1%BB%E5%9E%8B%E5%92%8C%E8%BF%9E%E6%8E%A5%E6%80%A7">7.变量类型和连接性</a>
+<ul>
+<li><a href="#%E5%8F%98%E9%87%8F%E7%B1%BB%E5%9E%8B">变量类型</a></li>
+<li><a href="#%E5%8F%98%E9%87%8F%E8%BF%9E%E6%8E%A5%E6%80%A7%E5%8F%8A%E5%85%B6%E5%8E%9F%E7%90%86">变量连接性及其原理</a>
+<ul>
+<li><a href="#%E8%BF%9E%E6%8E%A5%E6%80%A7">连接性</a></li>
+<li><a href="#%E5%8E%9F%E7%90%86%E4%BB%A5x86-g-32bit%E4%B8%BA%E4%BE%8B%E8%AF%B4%E6%98%8E">原理[以(x86)-(g++)-(32bit)为例说明]</a>
+<ul>
+<li><a href="#%E5%B1%80%E9%83%A8%E5%8F%98%E9%87%8F%E5%92%8C%E5%AF%84%E5%AD%98%E5%99%A8%E5%8F%98%E9%87%8F">局部变量和寄存器变量</a></li>
+<li><a href="#%E9%9D%99%E6%80%81%E5%92%8C%E5%85%A8%E5%B1%80">静态和全局</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#%E8%A1%A5%E5%85%85%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E4%B8%AD%E7%9A%84globalglobl%E5%92%8Cextern">补充汇编语言中的global(globl)和extern：</a></li>
+</ul>
+</li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://xy-gif.github.io/post/8zhi-lei-xing/">
+              <h3 class="post-title">
+                8.值类型
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  
+  <a class="rss" href="https://xy-gif.github.io/atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

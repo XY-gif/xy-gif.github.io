@@ -1,0 +1,386 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>9.运算符重载与友元 | 笔记</title>
+<link rel="shortcut icon" href="https://xy-gif.github.io/favicon.ico?v=1682314727285">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://xy-gif.github.io/styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="9.运算符重载与友元 | 笔记 - Atom Feed" href="https://xy-gif.github.io/atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="9.运算符重载与友元
+运算符重载
+在C++的类中可以重载运算符，重载方式如下
+返回值类型 operator运算符(参数列表)
+{
+    ......
+}
+
+例如：
+myStr&amp; operator=(const myStr&amp;..." />
+    <meta name="keywords" content="C++" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.5.1/build/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://xy-gif.github.io">
+  <img class="avatar" src="https://xy-gif.github.io/images/avatar.png?v=1682314727285" alt="">
+  </a>
+  <h1 class="site-title">
+    笔记
+  </h1>
+  <p class="site-description">
+    
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              9.运算符重载与友元
+            </h2>
+            <div class="post-info">
+              <span>
+                2023-04-18
+              </span>
+              <span>
+                4 min read
+              </span>
+              
+                <a href="https://xy-gif.github.io/tag/CYVB1qPMl/" class="post-tag">
+                  # C++
+                </a>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content" v-pre>
+                <h1 id="9运算符重载与友元">9.运算符重载与友元</h1>
+<h2 id="运算符重载">运算符重载</h2>
+<p>在C++的类中可以重载运算符，重载方式如下</p>
+<pre><code class="language-cpp">返回值类型 operator运算符(参数列表)
+{
+    ......
+}
+</code></pre>
+<p>例如：</p>
+<pre><code class="language-cpp">myStr&amp; operator=(const myStr&amp; mys)
+{
+    if(this-&gt;len&lt;mys.len)
+    {
+        delete[] this-&gt;str;
+        this-&gt;str = new char[mys.len];
+    }
+    this-&gt;len = mys.len;
+    memcpy(this-&gt;str,mys.str,mys.len);
+}
+</code></pre>
+<p>我们可以重载如下运算符：</p>
+<table>
+<thead>
+<tr>
+<th>+</th>
+<th>-</th>
+<th>*</th>
+<th>/</th>
+<th>%</th>
+<th>^</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>&amp;</td>
+<td>|</td>
+<td>~=</td>
+<td>!</td>
+<td>=</td>
+<td>&lt;</td>
+</tr>
+<tr>
+<td>&gt;</td>
+<td>+=</td>
+<td>-=</td>
+<td>*=</td>
+<td>/=</td>
+<td>%=</td>
+</tr>
+<tr>
+<td>^=</td>
+<td>&amp;=</td>
+<td>|=</td>
+<td>&lt;&lt;</td>
+<td>&gt;&gt;</td>
+<td>&gt;&gt;=</td>
+</tr>
+<tr>
+<td>||</td>
+<td>++</td>
+<td>--</td>
+<td>,</td>
+<td>-&gt;*</td>
+<td>-&gt;</td>
+</tr>
+<tr>
+<td>()</td>
+<td>[]</td>
+<td>new</td>
+<td>delete</td>
+<td>new[]</td>
+<td>delete[]</td>
+</tr>
+</tbody>
+</table>
+<p>++有前置和后置的区别，见下例：</p>
+<pre><code class="language-cpp">class MyClass {
+public:
+    // 前置++运算符重载
+    MyClass&amp; operator++() {
+        ++value;
+        return *this;
+    }
+
+    // 后置++运算符重载
+    MyClass operator++(int) {
+        MyClass temp(*this);
+        ++value;
+        return temp;
+    }
+
+private:
+    int value;
+};
+</code></pre>
+<p>很明显前置++返回的是本对象的引用是一个左值，<br>
+而后置++返回的是临时对象，是一个右值。</p>
+<h2 id="友元">友元</h2>
+<h3 id="友元函数">友元函数</h3>
+<p>友元函数和普通函数相比拥有更高的的访问权限，<br>
+友元函数可以访问类中的私有和保护成员，我们也可以<br>
+用这种方法重载运算符。<br>
+声明友元函数时，在函数名前加上friend即可。<br>
+在实现友元函数时不要在前面加上域运算符</p>
+<pre><code class="language-cpp">#include &lt;iostream&gt;
+
+class point
+{
+private:
+    int x,y;
+public:
+    point(int _x=0,int _y=0):x(_x),y(_y){};//当自定义一个构造函数后，就不会自动生成拷贝、和移动构造函数了
+    point(const point&amp; p):x(p.x),y(p.y){};
+    point(point&amp;&amp; p):x(p.x),y(p.y){p.x=0;p.y=0;};
+    ~point(){};
+    friend point operator+(const point &amp;p1,const point &amp;p2);
+    point&amp; operator=(point&amp;&amp; p);
+    point&amp; operator=(const point&amp; p);
+    void display();
+};
+
+point operator+(const point &amp;p1,const point &amp;p2)
+{
+    return point(p1.x+p2.x,p1.y+p2.y);
+}
+
+point&amp; point::operator=(point&amp;&amp; p)//移动赋值函数
+{
+        this-&gt;x = p.x;
+        this-&gt;y = p.y;
+        p.x = 0;
+        p.y = 0;
+        return *this;
+}
+
+point&amp; point::operator=(const point&amp; p)//拷贝赋值
+{
+        this-&gt;x = p.x;
+        this-&gt;y = p.y;
+        return *this;
+}
+
+void point::display()
+{
+    std::cout&lt;&lt;&quot;(&quot;&lt;&lt;x&lt;&lt;&quot;,&quot;&lt;&lt;y&lt;&lt;&quot;)&quot;&lt;&lt;std::endl;
+}
+
+int main()
+{
+    point p = point(1,2)+point(2,3);
+    p.display();
+    return 0;
+}
+</code></pre>
+<h3 id="友元类">友元类</h3>
+<p>与友元函数类似，可以访问另一个类中的私有和保护成员。<br>
+例如，类A中有友元类B，则B可以访问A中的私有、保护成员</p>
+<pre><code class="language-cpp">class A
+{
+public:
+    friend class B;
+    ...
+private:
+    ...
+}
+
+class B
+{
+    ....
+}
+</code></pre>
+<p><code>friend class B;</code>这句话放在<code>private</code>、<code>public</code>或者<code>protect</code>都可以</p>
+<h3 id="友元成员函数">友元成员函数</h3>
+<p>让某个类的成员成员函数成为另一个类的友元</p>
+<pre><code class="language-cpp">class B;//一般A中会有B作为组成部分
+
+class A
+{
+    ...
+}
+
+class B
+{
+    ...
+    friend void A::fun();
+    ...
+}
+</code></pre>
+<p>上述顺序不可以修改，<br>
+因为编译器要先看到<code>A::fun()</code>在A中声明后才行</p>
+<p>友元破坏了类的封装性，提高了系统的耦合度，<br>
+在一些大型项目中不建议使用友元，否则项目<br>
+耦合度会变的很高，难以维护。<br>
+对于一个人就可以维护的小型的项目可以自主<br>
+选择是否使用友元。</p>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li><a href="#9%E8%BF%90%E7%AE%97%E7%AC%A6%E9%87%8D%E8%BD%BD%E4%B8%8E%E5%8F%8B%E5%85%83">9.运算符重载与友元</a>
+<ul>
+<li><a href="#%E8%BF%90%E7%AE%97%E7%AC%A6%E9%87%8D%E8%BD%BD">运算符重载</a></li>
+<li><a href="#%E5%8F%8B%E5%85%83">友元</a>
+<ul>
+<li><a href="#%E5%8F%8B%E5%85%83%E5%87%BD%E6%95%B0">友元函数</a></li>
+<li><a href="#%E5%8F%8B%E5%85%83%E7%B1%BB">友元类</a></li>
+<li><a href="#%E5%8F%8B%E5%85%83%E6%88%90%E5%91%98%E5%87%BD%E6%95%B0">友元成员函数</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://xy-gif.github.io/post/placement-new-ji-zhi/">
+              <h3 class="post-title">
+                10.placement new机制
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  
+  <a class="rss" href="https://xy-gif.github.io/atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

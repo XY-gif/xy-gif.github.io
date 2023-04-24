@@ -1,0 +1,283 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>10.placement new机制 | 笔记</title>
+<link rel="shortcut icon" href="https://xy-gif.github.io/favicon.ico?v=1682314727285">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://xy-gif.github.io/styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="10.placement new机制 | 笔记 - Atom Feed" href="https://xy-gif.github.io/atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="10. placement new机制
+栈上分配
+C++中的new有指定new的机制(placement new机制)
+可以指定new的位置，可以通过 (addr)new(Class)的形式在addr的位置创建一个Class对象
+addr的..." />
+    <meta name="keywords" content="C++" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.5.1/build/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://xy-gif.github.io">
+  <img class="avatar" src="https://xy-gif.github.io/images/avatar.png?v=1682314727285" alt="">
+  </a>
+  <h1 class="site-title">
+    笔记
+  </h1>
+  <p class="site-description">
+    
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              10.placement new机制
+            </h2>
+            <div class="post-info">
+              <span>
+                2023-04-18
+              </span>
+              <span>
+                4 min read
+              </span>
+              
+                <a href="https://xy-gif.github.io/tag/CYVB1qPMl/" class="post-tag">
+                  # C++
+                </a>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content" v-pre>
+                <h1 id="10-placement-new机制">10. placement new机制</h1>
+<h2 id="栈上分配">栈上分配</h2>
+<p>C++中的new有指定new的机制(placement new机制)<br>
+可以指定new的位置，可以通过 (addr)new(Class)的形式在addr的位置创建一个Class对象</p>
+<p>addr的位置可以是栈或堆上</p>
+<p>栈上指定new分配：</p>
+<pre><code class="language-cpp">#include &lt;iostream&gt;
+using namespace std;
+ 
+class A
+{
+public:
+	A()
+	{
+		cout &lt;&lt; &quot;A's constructor&quot; &lt;&lt; endl;
+	}
+ 
+ 
+	~A()
+	{
+		cout &lt;&lt; &quot;A's destructor&quot; &lt;&lt; endl;
+	}
+	
+	void show()
+	{
+		cout &lt;&lt; &quot;num:&quot; &lt;&lt; num &lt;&lt; endl;
+	}
+	
+private:
+	int num;
+};
+ 
+int main()
+{
+	char mem[100];
+	mem[0] = 'A';
+	mem[1] = '\0';
+	mem[2] = '\0';
+	mem[3] = '\0';
+	cout &lt;&lt; (void*)mem &lt;&lt; endl;
+	A* p = new (mem)A;
+	cout &lt;&lt; p &lt;&lt; endl;
+	p-&gt;show();
+	p-&gt;~A();
+	getchar();
+}
+</code></pre>
+<p>可以看出指定new的本质就是返回指定位置的地址，并在相应位置创建对象，但其中不涉及内存的申请。当不需要申请的对象时，则要显示调用析构函数，来清空对象。同时同一个内存不能同时new两次分给不同对象，否则会产生覆盖现象。<br>
+在栈上指定的new不用delete回收，因为栈上的内存在函数结束时自动回收</p>
+<p>1）用定位放置new操作，既可以在栈(stack)上生成对象，也可以在堆（heap）上生成对象。如本例就是在栈上生成一个对象。</p>
+<p>（2）使用语句A* p=new (mem) A;定位生成对象时，指针p和数组名mem指向同一片存储区。所以，与其说定位放置new操作是申请空间，还不如说是利用已经请好的空间，真正的申请空间的工作是在此之前完成的。</p>
+<p>（3）使用语句A *p=new (mem) A;定位生成对象时，会自动调用类A的构造函数，但是由于对象的空间不会自动释放（对象实际上是借用别人的空间），所以必须显示的调用类的析构函数，如本例中的p-&gt;~A()。</p>
+<p>（4）如果有这样一个场景，我们需要大量的申请一块类似的内存空间，然后又释放掉，比如在在一个server中对于客户端的请求，每个客户端的每一次上行数据我们都需要为此申请一块内存，当我们处理完请求给客户端下行回复时释放掉该内存，表面上看者符合c++的内存管理要求，没有什么错误，但是仔细想想很不合理，为什么我们每个请求都要重新申请一块内存呢，要知道每一次内从的申请，系统都要在内存中找到一块合适大小的连续的内存空间，这个过程是很慢的（相对而言)，极端情况下，如果当前系统中有大量的内存碎片，并且我们申请的空间很大，甚至有可能失败。为什么我们不能共用一块我们事先准备好的内存呢？可以的，我们可以使用placement new来构造对象，那么就会在我们指定的内存空间中构造对象。</p>
+<h2 id="堆上分配">堆上分配</h2>
+<pre><code class="language-cpp">#include &lt;iostream&gt;
+using namespace std;
+ 
+class A
+{
+public:
+	A()
+	{
+		cout &lt;&lt; &quot;A's constructor&quot; &lt;&lt; endl;
+	}
+ 
+ 
+	~A()
+	{
+		cout &lt;&lt; &quot;A's destructor&quot; &lt;&lt; endl;
+	}
+	
+	void show()
+	{
+		cout &lt;&lt; &quot;num:&quot; &lt;&lt; num &lt;&lt; endl;
+	}
+	
+private:
+	int num;
+};
+ 
+int main()
+{
+	char *mem = new char[100];
+	mem[0] = 'A';
+	mem[1] = '\0';
+	mem[2] = '\0';
+	mem[3] = '\0';
+	cout &lt;&lt; (void*)mem &lt;&lt; endl;
+	A* p = new (mem)A;
+	cout &lt;&lt; p &lt;&lt; endl;
+	p-&gt;show();
+	p-&gt;~A();
+	delete[] mem;
+	getchar();
+}
+</code></pre>
+<p>堆上分配的对象不要时候用delete obj 来释放内存，销毁对象时还是显示调用析构函数，<br>
+当缓冲区不用时再调用delete[] 来释放缓冲区。</p>
+<h2 id="本文参考文章">本文参考文章</h2>
+<ul>
+<li><a href="https://zhuanlan.zhihu.com/p/228001107">《placement new机制》-知乎-AlexNoBug</a></li>
+</ul>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li><a href="#10-placement-new%E6%9C%BA%E5%88%B6">10. placement new机制</a>
+<ul>
+<li><a href="#%E6%A0%88%E4%B8%8A%E5%88%86%E9%85%8D">栈上分配</a></li>
+<li><a href="#%E5%A0%86%E4%B8%8A%E5%88%86%E9%85%8D">堆上分配</a></li>
+<li><a href="#%E6%9C%AC%E6%96%87%E5%8F%82%E8%80%83%E6%96%87%E7%AB%A0">本文参考文章</a></li>
+</ul>
+</li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://xy-gif.github.io/post/11yi-chang/">
+              <h3 class="post-title">
+                11.异常
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  
+  <a class="rss" href="https://xy-gif.github.io/atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

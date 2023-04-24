@@ -1,0 +1,377 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>2.array与vector | 笔记</title>
+<link rel="shortcut icon" href="https://xy-gif.github.io/favicon.ico?v=1682314727285">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://xy-gif.github.io/styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="2.array与vector | 笔记 - Atom Feed" href="https://xy-gif.github.io/atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="2.array与vector
+前置知识
+数值型模板参数，即模板参数中是具体数值，例如下
+template&lt;typename T, int N&gt;
+T fun(T)
+{
+    char str[N];
+    ...    
+}
+..." />
+    <meta name="keywords" content="C++" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.5.1/build/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://xy-gif.github.io">
+  <img class="avatar" src="https://xy-gif.github.io/images/avatar.png?v=1682314727285" alt="">
+  </a>
+  <h1 class="site-title">
+    笔记
+  </h1>
+  <p class="site-description">
+    
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              2.array与vector
+            </h2>
+            <div class="post-info">
+              <span>
+                2023-04-21
+              </span>
+              <span>
+                4 min read
+              </span>
+              
+                <a href="https://xy-gif.github.io/tag/CYVB1qPMl/" class="post-tag">
+                  # C++
+                </a>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content" v-pre>
+                <h1 id="2array与vector">2.array与vector</h1>
+<h2 id="前置知识">前置知识</h2>
+<p>数值型模板参数，即模板参数中是具体数值，例如下</p>
+<pre><code class="language-cpp">template&lt;typename T, int N&gt;
+T fun(T)
+{
+    char str[N];
+    ...    
+}
+</code></pre>
+<p>这个功能就像宏定义定义最大长度一样<br>
+当N定义为4就相当于#define N 4</p>
+<h2 id="array">array</h2>
+<h3 id="定义array">定义array</h3>
+<p>array在C++定义如下</p>
+<pre><code class="language-cpp">namespace std
+{
+    template &lt;typename Tp, size_t N&gt;
+    class array{...};
+}
+//Tp – Type of element. Required to be a complete type.
+//N – Number of elements.
+</code></pre>
+<p>声明一个array</p>
+<pre><code>std::array&lt;double, 10&gt; values;          //声明一个长度为10的array
+std::array&lt;double, 10&gt; values{};        //声明一个长度为10的array，并初始化所有元素为0
+std::array&lt;double, 10&gt; values {0.5,1.0,1.5,2.0};//声明一个长度为10的array初始化前4个元素，剩余为0
+</code></pre>
+<h3 id="array操作">array操作</h3>
+<p><em>以下Tp为模板参数</em></p>
+<table>
+<thead>
+<tr>
+<th>类成员接口</th>
+<th>函数作用</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>size_t size()</code></td>
+<td>返回array内当前元素个数</td>
+</tr>
+<tr>
+<td><code>size_t max_size()</code></td>
+<td>返回array最大能存多少个元素</td>
+</tr>
+<tr>
+<td><code>Tp* data()</code></td>
+<td>返回数组所在首地址</td>
+</tr>
+<tr>
+<td><code>bool empty()</code></td>
+<td>判断array是否为空</td>
+</tr>
+<tr>
+<td><code>void fill(const int &amp;__u)</code></td>
+<td>用__u填充array</td>
+</tr>
+</tbody>
+</table>
+<h2 id="vector">vector</h2>
+<h3 id="定义vector">定义vector</h3>
+<table>
+<thead>
+<tr>
+<th>定义方式</th>
+<th>解释</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>vector&lt;T&gt; v1</code></td>
+<td>定义一个空的向量v1</td>
+</tr>
+<tr>
+<td><code>vector&lt;T&gt; v2(vector&lt;T&gt; v1)</code></td>
+<td>定义一个和v1相同的向量v2</td>
+</tr>
+<tr>
+<td><code>vector&lt;T&gt; v2=v1</code></td>
+<td>定义一个和v1相同的向量v2</td>
+</tr>
+<tr>
+<td><code>vector&lt;T&gt; v3(size_t n,T val)</code></td>
+<td>定义一个长度为n所有值都为val的向量</td>
+</tr>
+<tr>
+<td><code>vector&lt;T&gt; v4(size_t n)</code></td>
+<td>定义一个长度为n的空向量</td>
+</tr>
+<tr>
+<td><code>vector&lt;T&gt; v5{a,b,c...}</code></td>
+<td>定义一个{a,b,c...}的向量</td>
+</tr>
+<tr>
+<td><code>vector&lt;T&gt; v6={a,b,c...}</code></td>
+<td>定义一个{a,b,c...}的向量</td>
+</tr>
+</tbody>
+</table>
+<h3 id="vector方法">vector方法</h3>
+<table>
+<thead>
+<tr>
+<th>类成员函数</th>
+<th>函数作用</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>size_t size()</code></td>
+<td>与之前string的类似</td>
+</tr>
+<tr>
+<td><code>size_t capacity()</code></td>
+<td>与之前string的类似</td>
+</tr>
+<tr>
+<td><code>void reserve(size_t __n)</code></td>
+<td>与之前string的类似</td>
+</tr>
+<tr>
+<td><code>void resize(size_t __n)</code></td>
+<td>与之前string的类似</td>
+</tr>
+<tr>
+<td><code>void push_back(int __x)</code></td>
+<td>在向量末尾添加元素__x，这会导致向量空间增长</td>
+</tr>
+<tr>
+<td><code>void pop_back()</code></td>
+<td>将向量末尾元素移除，向量空间不变size会减小</td>
+</tr>
+<tr>
+<td><code>void clear()</code></td>
+<td>清空所有元素，size变为0，但容量不变</td>
+</tr>
+</tbody>
+</table>
+<h2 id="array与vector区别">array与vector区别</h2>
+<h3 id="不同">不同</h3>
+<ul>
+<li>
+<p>构造方式不同</p>
+<ul>
+<li>vector无需指定大小，只需指定类型，例如：vector<int> a。</li>
+<li>array需要同时指定类型和大小，例如：array&lt;int, 3&gt; a。</li>
+</ul>
+</li>
+<li>
+<p>内存使用上不同</p>
+<ul>
+<li>vector需要占据比array更多的内存，因为其内存空间大小是动态可变的。</li>
+<li>内存高效的，用多少就申请多少。</li>
+</ul>
+</li>
+<li>
+<p>效率上不同</p>
+<ul>
+<li>vector效率偏低，因为当向vector中添加新元素的时候，内存空间不够，需要重新申请更大的空间，由于vector是连续内存空间的，因此其申请更多空间的时候，可能整个位置发生改变，需要将原来空间里的数据拷贝过去。</li>
+</ul>
+</li>
+<li>
+<p>下标类型不同</p>
+<ul>
+<li>在用下标访问元素时，vector 使用 vector::size_type 作为下标的类型，而数组下标的正确类型则是 size_t；</li>
+</ul>
+</li>
+<li>
+<p>swap操作不同</p>
+<ul>
+<li>vector是将引用进行交换，效率高，其迭代器指向原来的容器（原来的容器中的元素指向的却是另一个容器的值），但是end的引用并没有发生交换，因此在输出的时候注意别用end作为迭代终止条件。</li>
+<li>array是进行值的交换，效率低，且迭代器仍指向原来的容器</li>
+</ul>
+</li>
+</ul>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li><a href="#2array%E4%B8%8Evector">2.array与vector</a>
+<ul>
+<li><a href="#%E5%89%8D%E7%BD%AE%E7%9F%A5%E8%AF%86">前置知识</a></li>
+<li><a href="#array">array</a>
+<ul>
+<li><a href="#%E5%AE%9A%E4%B9%89array">定义array</a></li>
+<li><a href="#array%E6%93%8D%E4%BD%9C">array操作</a></li>
+</ul>
+</li>
+<li><a href="#vector">vector</a>
+<ul>
+<li><a href="#%E5%AE%9A%E4%B9%89vector">定义vector</a></li>
+<li><a href="#vector%E6%96%B9%E6%B3%95">vector方法</a></li>
+</ul>
+</li>
+<li><a href="#array%E4%B8%8Evector%E5%8C%BA%E5%88%AB">array与vector区别</a>
+<ul>
+<li><a href="#%E4%B8%8D%E5%90%8C">不同</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://xy-gif.github.io/post/3han-shu-zhi-zhen/">
+              <h3 class="post-title">
+                3.函数指针
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  
+  <a class="rss" href="https://xy-gif.github.io/atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

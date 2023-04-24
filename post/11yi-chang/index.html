@@ -1,0 +1,501 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>11.异常 | 笔记</title>
+<link rel="shortcut icon" href="https://xy-gif.github.io/favicon.ico?v=1682314727285">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://xy-gif.github.io/styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="11.异常 | 笔记 - Atom Feed" href="https://xy-gif.github.io/atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="11.异常
+基本概念
+C++中使用异常处理主要目的是使得程序更加强健，稳定，遇到异常时不至于崩溃
+C++中异常处理主要涉及三个关键字throw、try、catch。
+
+throw: 当问题出现时，程序会抛出一个异常。这是通过使用 throw..." />
+    <meta name="keywords" content="C++" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.5.1/build/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://xy-gif.github.io">
+  <img class="avatar" src="https://xy-gif.github.io/images/avatar.png?v=1682314727285" alt="">
+  </a>
+  <h1 class="site-title">
+    笔记
+  </h1>
+  <p class="site-description">
+    
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              11.异常
+            </h2>
+            <div class="post-info">
+              <span>
+                2023-04-17
+              </span>
+              <span>
+                10 min read
+              </span>
+              
+                <a href="https://xy-gif.github.io/tag/CYVB1qPMl/" class="post-tag">
+                  # C++
+                </a>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content" v-pre>
+                <h1 id="11异常">11.异常</h1>
+<h2 id="基本概念">基本概念</h2>
+<p>C++中使用异常处理主要目的是使得程序更加强健，稳定，遇到异常时不至于崩溃</p>
+<p>C++中异常处理主要涉及三个关键字throw、try、catch。</p>
+<ul>
+<li>throw: 当问题出现时，程序会抛出一个异常。这是通过使用 throw 关键字来完成的。</li>
+<li>catch: 在您想要处理问题的地方，通过异常处理程序捕获异常。catch 关键字用于捕获异常。</li>
+<li>try: try 块中的代码标识将被激活的特定异常。它后面通常跟着一个或多个 catch 块。</li>
+</ul>
+<h2 id="异常抛出">异常抛出</h2>
+<p>&quot;异常抛出&quot;全句是&quot;异常对象的抛出&quot;，我们用<code>throw</code>来抛出异常对象。</p>
+<p>异常对象：用于表示异常对象，它可以是任何类型，例如是一条异常字符串等<code>const char *s</code>，也就是说此处的异常对象本质就是普通对象，只是它们会在出现异常时被<code>throw</code>抛出.</p>
+<p>我们抛出的异常对象会被对应的<code>catch</code>语句捕获，然后处理。具体如何捕获和处理放在后面说。</p>
+<p>例如：有如下代码</p>
+<pre><code class="language-cpp">    for(int i = 10;i&gt;=-10;i--)
+    {
+        if(i==0)
+            throw &quot;Divide 0 error&quot;;
+        printf(&quot;%d/%d=%d\n&quot;,10,i,10/i);
+    }
+</code></pre>
+<p>很明显我们发现除数为0时就抛出了异常，此时所在函数会去查看本函数中是否有对应的处理语句，如果没有就会进行函数返回。</p>
+<h2 id="异常捕获与处理">异常捕获与处理</h2>
+<h3 id="try-catch语句和处理流程">try - catch语句和处理流程</h3>
+<p>我们用try - catch语句进行异常的捕获与处理<br>
+格式如下：</p>
+<pre><code class="language-cpp">try
+{   //try和catch括号必须写
+    //可能产生异常的代码，也就是说，此处可能会抛出异常
+}
+catch(Type1 e)//捕获类型为Type1的异常对象
+{
+    //处理异常对象e
+}
+catch(Type2&amp; e)//捕获类型为Type2的异常对象的引用
+{
+    //处理异常对象e
+}
+......
+</code></pre>
+<p>异常大致处理流程：（不太详细，具体多看例子）</p>
+<ol>
+<li>执行可能会产生异常的代码时，也就是含有throw的代码时。</li>
+<li>当抛出了异常，若此代码外部有try-catch语句，且catch中有对应的类型，就会在本函数中处理异常；</li>
+<li>若不符合2，就会把异常抛出本函数，并且把控制权交到调用函数手上；若调用函数中有try-catch语句，且catch中有对应的类型，就会在调用函数中处理异常，否则就会再次交出控制权并抛出异常。要是一直没有对应的catch，就会一直抛出异常并控制权到上一层，最终使得main函数把控制权交还给系统，程序结束。</li>
+<li>上述过程中，需要注意这几点：
+<ul>
+<li>当程序寻找catch语句时，且有多个catch语句时，程序会按照代码中从上到下的顺序逐个匹配catch块的类型。</li>
+<li>对于类对象，<strong>若catch的是值</strong>，父类的catch可以捕获子类的异常对象，此时捕获的对象就是父类的对象，无多态性，所以若子类有特有的异常处理方式，根据上一条，应该把子类的catch写在父类前面。<strong>若catch的是引用</strong>，父类也可以捕获子类对象，但此时所捕获的对象会出现多态性，可以调用各自的虚函数。</li>
+<li>throw异常到调用函数，这是程序控制权的转移到调用函数，而不是程序返回回到调用函数，这与C++底层有关。</li>
+<li>析构函数中抛出异常是非常危险的行为，谨慎使用</li>
+</ul>
+</li>
+</ol>
+<p>异常处理一般遵循的原则：</p>
+<ol>
+<li>异常处理应该尽可能地保证对程序状态的还原，以免造成不可预料的后果。</li>
+<li>在catch块中，应该尽量避免再次抛出异常，因为这可能会导致资源泄露和程序未知的行为。</li>
+<li>在多线程程序中，异常的处理方式与单线程略有不同，需要特别注意线程间的异常传递机制。</li>
+<li>对于标准库函数，也都提供了相应的异常处理方式，需要查阅文档学习并加以应用。</li>
+<li>需要在程序中养成良好的异常处理习惯，这样才能使程序更加健壮、可靠。</li>
+</ol>
+<h3 id="例1">例1</h3>
+<pre><code class="language-cpp">#include &lt;iostream&gt;
+
+void fun()
+{
+    for(int i = 3;i&gt;=-3;i--)
+    {
+        if(i==0)
+            throw &quot;Divide 0 error&quot;;
+        printf(&quot;%d/%d=%d\n&quot;,10,i,10/i);
+    }
+}
+
+int main()
+{
+    try 
+    {
+        fun();
+        printf(&quot;Fun next\n&quot;);
+    }
+    catch(const char *s)
+    {
+        printf(&quot;Here is Error:%s\n&quot;,s);
+    }
+    printf(&quot;End of Main&quot;);
+}
+</code></pre>
+<p><strong>执行过程</strong>：</p>
+<ol>
+<li>main函数中先执行try中语句，也就是fun();</li>
+<li>进入fun函数后，i从3开始递减到-3，且i做除数，所以当i等于0时就不合理了，所以需要抛出异常，此处我们抛出一个常量字符串表示异常信息。</li>
+<li>当抛出异常时，发现fun函数中没有对应于常量字符串异常类型的处理语句，也就是没有对应catch块，所以此时fun函数把控制权交给main，并且把异常抛出到main中。</li>
+<li>main函数中在fun的位置抛出了一个常量字符串类型的异常，立刻去catch检查，发现有对应的catch块，此时处理异常执行<code>printf(&quot;Here is Error:%s\n&quot;,s);</code></li>
+<li>处理完成之后try - catch块就结束了，也就是说不会执行<code>printf(&quot;Fun next\n&quot;);</code>，try-catch块结束后，继续执行程序，也就是<code>printf(&quot;End of Main&quot;);</code></li>
+</ol>
+<p><strong>执行结果</strong>：</p>
+<pre><code>10/3=3
+10/2=5
+10/1=10
+Here is Error:Divide 0 error
+End of Main
+</code></pre>
+<h3 id="例2">例2</h3>
+<pre><code class="language-cpp">#include &lt;iostream&gt;
+
+void fun()
+{
+    try
+    {
+        for(int i = 3;i&gt;=-3;i--)
+        {
+            if(i==0)
+                throw &quot;Divide 0 error&quot;;
+            printf(&quot;%d/%d=%d\n&quot;,10,i,10/i);
+        }
+    }
+    catch(const char *s)
+    {
+        printf(&quot;Here is Error 1:%s\n&quot;,s);
+    }
+}
+
+int main()
+{
+    try 
+    {
+        fun();
+        printf(&quot;Fun next\n&quot;);
+    }
+    catch(const char *s)
+    {
+        printf(&quot;Here is Error 2:%s\n&quot;,s);
+    }
+    printf(&quot;End of Main&quot;);
+}
+</code></pre>
+<p><strong>执行过程</strong>：</p>
+<ol>
+<li>main函数中先执行try中语句，也就是fun();</li>
+<li>进入fun函数后，执行到抛出异常，抛出的是常量字符串类型异常。</li>
+<li>抛出异常时，发现抛出异常的位置就在try - catch块中</li>
+<li>所以当前的catch直接捕获了常量字符串类型异常，之后进行异常处理，执行<code>printf(&quot;Here is Error 1:%s\n&quot;,s);</code>。</li>
+<li>处理完异常后，fun中的那个try-catch块结束，此时fun函数也结束了，所以返回main函数</li>
+<li>由于异常已经被fun处理过了，所以main函数中不会处理异常也就是不会执行<code>printf(&quot;Here is Error 2:%s\n&quot;,s);</code>。此时main函数中fun函数执行完成，执行下一句<code>printf(&quot;Fun next\n&quot;);</code></li>
+<li>main中的try-catch 块结束了，执行下一句<code>printf(&quot;End of Main&quot;);</code></li>
+</ol>
+<p><strong>执行结果</strong>：</p>
+<pre><code>10/3=3
+10/2=5
+10/1=10
+Here is Error 1:Divide 0 error
+Fun next
+End of Main
+</code></pre>
+<h2 id="自定义异常类型">自定义异常类型</h2>
+<p>C++中我们可以自己定义异常类型</p>
+<h3 id="例3">例3</h3>
+<pre><code class="language-cpp">#include &lt;iostream&gt;
+#include &lt;string&gt;
+
+using std::cin;
+using std::cout;
+using std::endl;
+using std::string;
+
+class TooBigError
+{
+public:
+    virtual void printError(int n) const//写成虚函数方便以后子类覆盖
+    {
+        cout&lt;&lt;&quot;Number &quot;&lt;&lt;n&lt;&lt;&quot; is too Big&quot;&lt;&lt;endl;
+    };
+};
+
+
+void Get_number(int n)
+{
+    if(n&gt;=1000)
+        throw TooBigError();
+    else
+        cout &lt;&lt; &quot;Your number below 1000 is &quot;&lt;&lt;n&lt;&lt;endl;;
+}
+
+
+int main()
+{
+    while(1)
+    {
+        cout&lt;&lt;&quot;Plase input a number below 100&quot;&lt;&lt;endl;
+        int n;
+        cin&gt;&gt;n;
+        try
+        {
+            Get_number(n);
+        }
+        catch(TooBigError &amp;e)
+        {
+            e.printError(n);
+            exit(1);
+        }
+    }
+}
+</code></pre>
+<p>上述代码检查输入是否是小于1000的数字<br>
+<em>本例还是不太严谨，例如没有检查输入的是不是字符，但是这个只是个例子，主要是了解如何定义异常类型，但是在实际工程中要排除一切不合理的输入</em></p>
+<h2 id="c-标准的异常">C++ 标准的异常</h2>
+<h3 id="标准异常分类">标准异常分类</h3>
+<figure data-type="image" tabindex="1"><img src="https://xy-gif.github.io/post-images/1682312437184.png" alt="" loading="lazy"></figure>
+<table>
+<thead>
+<tr>
+<th>异常</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>std::exception</td>
+<td>该异常是所有标准 C++ 异常的父类。</td>
+</tr>
+<tr>
+<td>std::bad_alloc</td>
+<td>该异常可以通过 new 抛出。</td>
+</tr>
+<tr>
+<td>std::bad_cast</td>
+<td>该异常可以通过 dynamic_cast 抛出。</td>
+</tr>
+<tr>
+<td>std::bad_typeid</td>
+<td>该异常可以通过 typeid 抛出。</td>
+</tr>
+<tr>
+<td>std::bad_exception</td>
+<td>这在处理 C++ 程序中无法预期的异常时非常有用。</td>
+</tr>
+<tr>
+<td>std::logic_error</td>
+<td>理论上可以通过读取代码来检测到的异常。</td>
+</tr>
+<tr>
+<td>std::domain_error</td>
+<td>当使用了一个无效的数学域时，会抛出该异常。</td>
+</tr>
+<tr>
+<td>std::invalid_argument</td>
+<td>当使用了无效的参数时，会抛出该异常。</td>
+</tr>
+<tr>
+<td>std::length_error</td>
+<td>当创建了太长的 std::string 时，会抛出该异常。</td>
+</tr>
+<tr>
+<td>std::out_of_range</td>
+<td>该异常可以通过方法抛出，例如 std::vector 和 std::bitset&lt;&gt;::operator<a href=""></a>。</td>
+</tr>
+<tr>
+<td>std::runtime_error</td>
+<td>理论上不可以通过读取代码来检测到的异常。</td>
+</tr>
+<tr>
+<td>std::overflow_error</td>
+<td>当发生数学上溢时，会抛出该异常。</td>
+</tr>
+<tr>
+<td>std::range_error</td>
+<td>当尝试存储超出范围的值时，会抛出该异常。</td>
+</tr>
+<tr>
+<td>std::underflow_error</td>
+<td>当发生数学下溢时，会抛出该异常。</td>
+</tr>
+</tbody>
+</table>
+<p>上述异常中有what函数是虚函数可以重写，所以我们可以自定义异常继承于上述异常</p>
+<h3 id="例4">例4</h3>
+<pre><code class="language-cpp">#include &lt;iostream&gt;
+#include &lt;exception&gt;
+using namespace std;
+
+class MyException : public std::exception
+{
+public:
+    virtual const char* what() const noexcept
+    {
+        return &quot;MyException: something went wrong!&quot;;
+    }
+};
+
+int main()
+{
+    try {
+        throw MyException();
+    } catch (const std::exception&amp; e) {
+        std::cerr &lt;&lt; e.what() &lt;&lt; std::endl;
+    }
+
+    return 0;
+}
+</code></pre>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li><a href="#11%E5%BC%82%E5%B8%B8">11.异常</a>
+<ul>
+<li><a href="#%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5">基本概念</a></li>
+<li><a href="#%E5%BC%82%E5%B8%B8%E6%8A%9B%E5%87%BA">异常抛出</a></li>
+<li><a href="#%E5%BC%82%E5%B8%B8%E6%8D%95%E8%8E%B7%E4%B8%8E%E5%A4%84%E7%90%86">异常捕获与处理</a>
+<ul>
+<li><a href="#try-catch%E8%AF%AD%E5%8F%A5%E5%92%8C%E5%A4%84%E7%90%86%E6%B5%81%E7%A8%8B">try - catch语句和处理流程</a></li>
+<li><a href="#%E4%BE%8B1">例1</a></li>
+<li><a href="#%E4%BE%8B2">例2</a></li>
+</ul>
+</li>
+<li><a href="#%E8%87%AA%E5%AE%9A%E4%B9%89%E5%BC%82%E5%B8%B8%E7%B1%BB%E5%9E%8B">自定义异常类型</a>
+<ul>
+<li><a href="#%E4%BE%8B3">例3</a></li>
+</ul>
+</li>
+<li><a href="#c-%E6%A0%87%E5%87%86%E7%9A%84%E5%BC%82%E5%B8%B8">C++ 标准的异常</a>
+<ul>
+<li><a href="#%E6%A0%87%E5%87%86%E5%BC%82%E5%B8%B8%E5%88%86%E7%B1%BB">标准异常分类</a></li>
+<li><a href="#%E4%BE%8B4">例4</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://xy-gif.github.io/post/12zhi-neng-zhi-zhen/">
+              <h3 class="post-title">
+                12.智能指针
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  
+  <a class="rss" href="https://xy-gif.github.io/atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>
